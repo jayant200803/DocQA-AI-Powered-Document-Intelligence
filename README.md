@@ -14,7 +14,24 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB_Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20App-4c6ef5?style=for-the-badge&logo=render&logoColor=white)](https://docqa-ai-powered-document-intelligence-3.onrender.com)
+![Status](https://img.shields.io/badge/Status-Live%20on%20Render-22c55e?style=for-the-badge)
+
 </div>
+
+---
+
+## Live Demo
+
+> The app is fully deployed and live. Click below to try it — no setup required.
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | [docqa-ai-powered-document-intelligence-3.onrender.com](https://docqa-ai-powered-document-intelligence-3.onrender.com) | Live |
+| **Backend API** | [docqa-ai-powered-document-intelligence-2.onrender.com](https://docqa-ai-powered-document-intelligence-2.onrender.com) | Live |
+| **AI Service** | [docqa-ai-powered-document-intelligence.onrender.com](https://docqa-ai-powered-document-intelligence.onrender.com) | Live |
+
+> **Note:** Deployed on Render free tier — the first load after inactivity may take ~30 seconds to wake up. Subsequent requests are instant.
 
 ---
 
@@ -306,5 +323,9 @@ This is why DocQA can answer nuanced questions that a simple `Ctrl+F` would miss
 <div align="center">
 
 Built with Google Gemini · Pinecone · MongoDB Atlas · React · FastAPI
+
+**Deployed on [Render](https://render.com)**
+
+[Try it live →](https://docqa-ai-powered-document-intelligence-3.onrender.com)
 
 </div>
