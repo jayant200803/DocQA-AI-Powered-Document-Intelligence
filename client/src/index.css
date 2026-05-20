@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-slate-50;
+  }
+
+  /* Light scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300/80 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+
+  /* Dark scrollbar (sidebar) */
+  .dark-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
+  .dark-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+}
+
+@layer components {
+  /* ── Buttons ─────────────────────────────────────── */
+  .btn-primary {
+    @apply relative bg-gradient-to-r from-brand-600 to-indigo-600 text-white px-4 py-2.5 rounded-xl font-semibold
+           hover:from-brand-500 hover:to-indigo-500 active:scale-[0.97]
+           transition-all duration-200 shadow-md shadow-brand-300/30
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:scale-100;
+  }
+  .btn-primary:not(:disabled):hover {
+    box-shadow: 0 0 20px rgba(92,124,250,0.35), 0 4px 12px rgba(92,124,250,0.2);
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-xl font-medium text-gray-600
+           hover:bg-gray-100 active:bg-gray-200 transition-colors duration-150;
+  }
+
+  /* ── Inputs ──────────────────────────────────────── */
+  .input-field {
+    @apply w-full px-3.5 py-2.5 border border-gray-200 rounded-xl bg-white
+           focus:outline-none focus:ring-2 focus:ring-brand-400/40 focus:border-brand-400
+           placeholder-gray-400 text-gray-800 transition-all duration-200 shadow-sm
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── Glass utilities ─────────────────────────────── */
+  .glass {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
+  .glass-dark {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(16px);
+  }
+
+  /* ── Streaming cursor ────────────────────────────── */
+  .streaming-cursor::after {
+    content: '▊';
+    @apply text-brand-500 animate-pulse ml-0.5;
+  }
+
+  /* ── Gradient text ───────────────────────────────── */
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+
+  /* ── Sidebar nav items ───────────────────────────── */
+  .sidebar-item {
+    @apply flex items-center gap-2.5 px-2.5 py-2 rounded-xl cursor-pointer
+           text-slate-400 hover:text-white hover:bg-white/5
+           transition-all duration-150 select-none;
+  }
+
+  .sidebar-item-active {
+    @apply text-white bg-white/10;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 16px rgba(92,124,250,0.12);
+  }
+
+  /* ── Chat input wrap ─────────────────────────────── */
+  .chat-input-wrap {
+    @apply bg-white rounded-2xl border border-gray-200/70 transition-all duration-200;
+    box-shadow: 0 4px 24px rgba(92,124,250,0.06), 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .chat-input-wrap:focus-within {
+    border-color: rgba(92,124,250,0.35);
+    box-shadow: 0 0 0 3px rgba(92,124,250,0.1), 0 8px 32px rgba(92,124,250,0.1);
+  }
+}
+
+@layer utilities {
+  /* ── Background mesh ─────────────────────────────── */
+  .bg-mesh {
+    background:
+      radial-gradient(ellipse at 15% 40%, rgba(92,124,250,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(99,102,241,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 85%, rgba(76,110,245,0.05) 0%, transparent 55%),
+      #f8faff;
+  }
+
+  /* ── Auth left-panel background ─────────────────── */
+  .bg-auth {
+    background: linear-gradient(140deg, #06081a 0%, #0d1035 35%, #180f55 65%, #0a0d2e 100%);
+  }
+
+  /* ── Auth animated orbs ──────────────────────────── */
+  .auth-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ── Message fade-in ─────────────────────────────── */
+  .msg-enter {
+    animation: msgIn 0.28s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── Voice pulse ring ────────────────────────────── */
+  .voice-playing { animation: voicePulse 1.5s ease-in-out infinite; }
+
+  @keyframes voicePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(92,124,250,0.5); }
+    50%       { box-shadow: 0 0 0 7px rgba(92,124,250,0); }
+  }
+
+  /* ── Shimmer skeleton ────────────────────────────── */
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+
+  /* ── Typing dots ─────────────────────────────────── */
+  .typing-dot {
+    animation: typingDot 1.4s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingDot {
+    0%, 60%, 100% { opacity: 0.2; transform: translateY(0); }
+    30%            { opacity: 1;   transform: translateY(-4px); }
+  }
+}
