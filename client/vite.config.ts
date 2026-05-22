@@ -6,5 +6,9 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    watch: {
+      usePolling: true,   // required for Docker on Windows
+      interval: 1000,
+    },
   },
 });
