@@ -75,8 +75,9 @@ async def query_documents(request: QueryRequest):
 
 async def _no_results_stream():
     """SSE stream for when no relevant chunks are found."""
+    no_results_msg = "I couldn't find any relevant information in your documents for this question."
     yield f"data: {json.dumps({'type': 'sources', 'data': []})}\n\n"
-    yield f"data: {json.dumps({'type': 'token', 'data': \"I couldn't find any relevant information in your documents for this question.\"})}\n\n"
+    yield f"data: {json.dumps({'type': 'token', 'data': no_results_msg})}\n\n"
     yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
 
