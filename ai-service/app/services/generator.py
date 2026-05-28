@@ -1,6 +1,6 @@
 import httpx
 import json
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 from app.config.settings import get_settings
 from app.utils.prompts import build_messages
 
@@ -45,28 +45,29 @@ def generate_answer(question: str, chunks: list[dict]) -> str:
     return "".join(p["text"] for p in parts if "text" in p and not p.get("thought"))
 
 
-def generate_answer_stream(question: str, chunks: list[dict]) -> Generator[str, None, None]:
+async def generate_answer_stream(question: str, chunks: list[dict]) -> AsyncGenerator[str, None]:
     """Stream answer tokens one at a time using Gemini SSE."""
     settings = get_settings()
-    with httpx.stream(
-        "POST",
-        f"{_BASE}/{settings.llm_model}:streamGenerateContent",
-        params={"key": settings.google_api_key, "alt": "sse"},
-        json=_make_body(_build_prompt(question, chunks), settings),
-        timeout=120.0,
-    ) as response:
-        response.raise_for_status()
-        for line in response.iter_lines():
-            if not line.startswith("data: "):
-                continue
-            data_str = line[6:].strip()
-            if not data_str or data_str == "[DONE]":
-                continue
-            try:
-                data = json.loads(data_str)
-                for candidate in data.get("candidates", []):
-                    for part in candidate.get("content", {}).get("parts", []):
-                        if "text" in part and not part.get("thought"):
-                            yield part["text"]
-            except json.JSONDecodeError:
-                pass
+    async with httpx.AsyncClient() as client:
+        async with client.stream(
+            "POST",
+            f"{_BASE}/{settings.llm_model}:streamGenerateContent",
+            params={"key": settings.google_api_key, "alt": "sse"},
+            json=_make_body(_build_prompt(question, chunks), settings),
+            timeout=120.0,
+        ) as response:
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if not line.startswith("data: "):
+                    continue
+                data_str = line[6:].strip()
+                if not data_str or data_str == "[DONE]":
+                    continue
+                try:
+                    data = json.loads(data_str)
+                    for candidate in data.get("candidates", []):
+                        for part in candidate.get("content", {}).get("parts", []):
+                            if "text" in part and not part.get("thought"):
+                                yield part["text"]
+                except json.JSONDecodeError:
+                    pass

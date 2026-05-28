@@ -41,6 +41,12 @@ async def query_documents(request: QueryRequest):
         raise HTTPException(status_code=500, detail=f"Retrieval failed: {str(e)}")
 
     if not chunks:
+        if request.stream:
+            return StreamingResponse(
+                _no_results_stream(),
+                media_type="text/event-stream",
+                headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
+            )
         return {
             "answer": "I couldn't find any relevant information in your documents for this question.",
             "sources": [],
@@ -67,6 +73,13 @@ async def query_documents(request: QueryRequest):
             raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
 
+async def _no_results_stream():
+    """SSE stream for when no relevant chunks are found."""
+    yield f"data: {json.dumps({'type': 'sources', 'data': []})}\n\n"
+    yield f"data: {json.dumps({'type': 'token', 'data': \"I couldn't find any relevant information in your documents for this question.\"})}\n\n"
+    yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+
 async def _stream_response(question: str, chunks: list[dict]):
     """Generator for Server-Sent Events streaming."""
     # First, send the sources
@@ -74,7 +87,7 @@ async def _stream_response(question: str, chunks: list[dict]):
 
     # Then stream the answer tokens
     try:
-        for token in generate_answer_stream(question, chunks):
+        async for token in generate_answer_stream(question, chunks):
             yield f"data: {json.dumps({'type': 'token', 'data': token})}\n\n"
     except Exception as e:
         yield f"data: {json.dumps({'type': 'error', 'data': str(e)})}\n\n"
