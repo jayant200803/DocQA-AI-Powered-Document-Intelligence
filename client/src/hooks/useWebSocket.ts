@@ -18,6 +18,8 @@ export const useWebSocket = (): WebSocketHook => {
   const listenersRef = useRef<Record<string, (msg: WsMessage) => void>>({});
   const shouldReconnectRef = useRef(false);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Exponential backoff: 3s, 6s, 12s, 24s, capped at 30s
+  const reconnectAttemptsRef = useRef(0);
 
   const connect = useCallback(() => {
     const token = localStorage.getItem('accessToken');
@@ -31,20 +33,21 @@ export const useWebSocket = (): WebSocketHook => {
 
     ws.onopen = () => {
       setIsConnected(true);
-      console.log('WebSocket connected');
+      reconnectAttemptsRef.current = 0; // reset backoff on success
     };
 
     ws.onclose = () => {
       setIsConnected(false);
       setIsStreaming(false);
-      console.log('WebSocket disconnected');
       if (shouldReconnectRef.current) {
-        reconnectTimerRef.current = setTimeout(() => connect(), 3000);
+        const delay = Math.min(3000 * 2 ** reconnectAttemptsRef.current, 30000);
+        reconnectAttemptsRef.current += 1;
+        reconnectTimerRef.current = setTimeout(() => connect(), delay);
       }
     };
 
-    ws.onerror = (err) => {
-      console.error('WebSocket error:', err);
+    ws.onerror = () => {
+      // onclose fires immediately after onerror — backoff handled there
     };
 
     ws.onmessage = (event: MessageEvent) => {
