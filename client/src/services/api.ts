@@ -16,6 +16,22 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+// Shared refresh promise — prevents concurrent 401s from each firing a separate refresh call
+let refreshPromise: Promise<void> | null = null;
+
+const doRefresh = async (): Promise<void> => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) throw new Error('No refresh token');
+
+  const { data } = await axios.post<{ accessToken: string; refreshToken: string }>(
+    `${API_URL}/api/auth/refresh`,
+    { refreshToken }
+  );
+
+  localStorage.setItem('accessToken', data.accessToken);
+  localStorage.setItem('refreshToken', data.refreshToken);
+};
+
 // Response interceptor — handle token refresh on 401
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
@@ -25,20 +41,19 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      if (!refreshPromise) {
+        refreshPromise = doRefresh().finally(() => {
+          refreshPromise = null;
+        });
+      }
+
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) throw new Error('No refresh token');
-
-        const { data } = await axios.post<{ accessToken: string; refreshToken: string }>(
-          `${API_URL}/api/auth/refresh`,
-          { refreshToken }
-        );
-
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
-
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-        return api(originalRequest);
+        await refreshPromise;
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        }
       } catch {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');

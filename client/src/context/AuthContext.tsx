@@ -13,7 +13,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    if (token && !user) {
+    if (token) {
+      // Always verify the token on startup so the dashboard never renders with
+      // an expired token. The axios interceptor will refresh it automatically
+      // if needed before getMe() resolves.
       authAPI
         .getMe()
         .then(({ data }) => {
@@ -25,9 +28,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
+          setUser(null);
         })
         .finally(() => setLoading(false));
     } else {
+      setUser(null);
       setLoading(false);
     }
   }, []);

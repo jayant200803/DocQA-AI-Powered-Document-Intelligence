@@ -7,7 +7,7 @@ import { useWebSocket } from '../../hooks/useWebSocket';
 import { chatAPI } from '../../services/api';
 import { Message, Source, WsMessage } from '../../types';
 
-const AI_URL = 'http://localhost:8000';
+const AI_URL = import.meta.env.VITE_AI_URL || 'http://localhost:8000';
 
 const genId = (): string => {
   try {
@@ -31,6 +31,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastQuestionRef = useRef('');
   const suggestionsFetchedRef = useRef(false);
+  const pendingLocalSessionRef = useRef<string | null>(null);
 
   const ws = useWebSocket();
 
@@ -42,7 +43,12 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   useEffect(() => {
     if (sessionId) {
       setCurrentSessionId(sessionId);
-      loadSession(sessionId);
+      // Skip fetching if this session was just generated locally by handleSend —
+      // it hasn't been saved to the DB yet so the request would 404.
+      if (sessionId !== pendingLocalSessionRef.current) {
+        loadSession(sessionId);
+      }
+      pendingLocalSessionRef.current = null;
     } else {
       setCurrentSessionId('');
       setMessages([]);
@@ -141,8 +147,15 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
     try {
       const { data } = await chatAPI.getSession(sid);
       setMessages((data.chat?.messages as Message[]) || []);
-    } catch {
+    } catch (err: unknown) {
       setMessages([]);
+      // Session doesn't exist on the server (generated locally but never saved).
+      // Clear it so the UI doesn't keep trying to load it.
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 404) {
+        setCurrentSessionId('');
+        onSessionChange('');
+      }
     }
   };
 
@@ -155,6 +168,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
       const sid = currentSessionId || genId();
       if (!currentSessionId) {
+        pendingLocalSessionRef.current = sid;
         setCurrentSessionId(sid);
         onSessionChange(sid);
       }

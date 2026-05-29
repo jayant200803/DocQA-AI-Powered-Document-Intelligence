@@ -1,20 +1,32 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketHook, WsMessage } from '../types';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:5000';
+// Derive WS URL from VITE_WS_URL, or fall back to converting VITE_API_URL's
+// scheme (https→wss, http→ws). This means only VITE_API_URL is needed in Render.
+const WS_URL: string = (() => {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL as string;
+  if (import.meta.env.VITE_API_URL) {
+    return (import.meta.env.VITE_API_URL as string).replace(/^https/, 'wss').replace(/^http(?!s)/, 'ws');
+  }
+  return 'ws://localhost:5000';
+})();
 
 export const useWebSocket = (): WebSocketHook => {
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const listenersRef = useRef<Record<string, (msg: WsMessage) => void>>({});
+  const shouldReconnectRef = useRef(false);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const connect = useCallback(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    const state = wsRef.current?.readyState;
+    if (state === WebSocket.OPEN || state === WebSocket.CONNECTING) return;
 
+    shouldReconnectRef.current = true;
     const ws = new WebSocket(`${WS_URL}/ws?token=${token}`);
 
     ws.onopen = () => {
@@ -26,7 +38,9 @@ export const useWebSocket = (): WebSocketHook => {
       setIsConnected(false);
       setIsStreaming(false);
       console.log('WebSocket disconnected');
-      setTimeout(() => connect(), 3000);
+      if (shouldReconnectRef.current) {
+        reconnectTimerRef.current = setTimeout(() => connect(), 3000);
+      }
     };
 
     ws.onerror = (err) => {
@@ -47,6 +61,11 @@ export const useWebSocket = (): WebSocketHook => {
   }, []);
 
   const disconnect = useCallback(() => {
+    shouldReconnectRef.current = false;
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
+    }
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
