@@ -1,4 +1,5 @@
 import json
+import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -90,6 +91,12 @@ async def _stream_response(question: str, chunks: list[dict]):
     try:
         async for token in generate_answer_stream(question, chunks):
             yield f"data: {json.dumps({'type': 'token', 'data': token})}\n\n"
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 429:
+            msg = "The AI service is rate limited. Please wait a moment and try again."
+        else:
+            msg = f"AI service error ({e.response.status_code}). Please try again."
+        yield f"data: {json.dumps({'type': 'error', 'data': msg})}\n\n"
     except Exception as e:
         yield f"data: {json.dumps({'type': 'error', 'data': str(e)})}\n\n"
 
