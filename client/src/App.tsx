@@ -5,8 +5,6 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
-import UploadZone from './components/Documents/UploadZone';
-import DocumentList from './components/Documents/DocumentList';
 import ChatWindow from './components/Chat/ChatWindow';
 import { documentAPI } from './services/api';
 import { Document } from './types';
@@ -15,8 +13,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0c0c0f' }}>
+        <div className="w-7 h-7 border-2 border-white/10 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -28,7 +26,6 @@ const Dashboard = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDocIds, setSelectedDocIds] = useState<string[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState('');
-  const [showUpload, setShowUpload] = useState(false);
 
   const loadDocuments = useCallback(async () => {
     try {
@@ -70,7 +67,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: '#0d0f1a' }}>
+    <div className="h-screen flex flex-col" style={{ background: '#0c0c0f' }}>
       <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex-1 flex min-h-0">
@@ -80,45 +77,14 @@ const Dashboard = () => {
           documents={documents}
           selectedDocIds={selectedDocIds}
           onToggleDoc={handleToggleDoc}
+          onDeleteDoc={handleDeleteDoc}
           onNewChat={handleNewChat}
           currentSessionId={currentSessionId}
           onSelectSession={(sid) => setCurrentSessionId(sid)}
+          onDocumentsChange={loadDocuments}
         />
 
         <main className="flex-1 flex flex-col min-h-0">
-          {/* Toolbar */}
-          <div className="flex items-center justify-between px-5 py-2 bg-white/80 backdrop-blur-sm shrink-0"
-            style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center gap-2">
-              {selectedDocIds.length > 0 ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                  style={{ background: 'rgba(76,110,245,0.1)', color: '#4263eb', border: '1px solid rgba(76,110,245,0.2)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-                  {selectedDocIds.length} doc{selectedDocIds.length !== 1 ? 's' : ''} selected
-                </span>
-              ) : (
-                <span className="text-xs text-gray-400">Select documents from the sidebar</span>
-              )}
-            </div>
-            <button
-              onClick={() => setShowUpload(!showUpload)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150"
-              style={showUpload
-                ? { background: 'rgba(76,110,245,0.1)', color: '#4263eb', border: '1px solid rgba(76,110,245,0.2)' }
-                : { background: 'rgba(0,0,0,0.04)', color: '#6b7280', border: '1px solid rgba(0,0,0,0.07)' }
-              }
-            >
-              {showUpload ? '✕ Close' : '+ Upload'}
-            </button>
-          </div>
-
-          {showUpload && (
-            <div className="bg-white shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-              <UploadZone onUploadComplete={loadDocuments} />
-              <DocumentList documents={documents} onDelete={handleDeleteDoc} />
-            </div>
-          )}
-
           <ChatWindow
             selectedDocIds={selectedDocIds}
             sessionId={currentSessionId}

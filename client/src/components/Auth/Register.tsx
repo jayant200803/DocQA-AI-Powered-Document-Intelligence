@@ -16,7 +16,7 @@ const DarkInput = ({
   onChange: (v: string) => void; required?: boolean; autoFocus?: boolean; minLength?: number;
 }) => (
   <div>
-    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{label}</label>
+    <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">{label}</label>
     <input
       type={type}
       placeholder={placeholder}
@@ -25,11 +25,11 @@ const DarkInput = ({
       required={required}
       autoFocus={autoFocus}
       minLength={minLength}
-      className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-slate-600 outline-none transition-all duration-200"
+      className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-slate-700 outline-none transition-all duration-200"
       style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
       onFocus={e => {
-        e.currentTarget.style.border = '1px solid rgba(92,124,250,0.5)';
-        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(92,124,250,0.12)';
+        e.currentTarget.style.border = '1px solid rgba(99,102,241,0.5)';
+        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)';
       }}
       onBlur={e => {
         e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)';
@@ -71,75 +71,65 @@ const Register = () => {
       {/* ── Left decorative panel ─────────────────────── */}
       <div className="hidden lg:flex lg:w-[55%] bg-auth relative overflow-hidden flex-col justify-between p-14 select-none">
 
-        {/* Vivid orbs — different palette from Login */}
-        <div className="auth-orb w-[520px] h-[520px] -top-32 -left-20 animate-orb-reverse"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.55) 0%, rgba(109,40,217,0.2) 50%, transparent 70%)', animationDelay: '2s' }} />
-        <div className="auth-orb w-[400px] h-[400px] top-1/2 -right-20 animate-orb"
-          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(29,78,216,0.2) 50%, transparent 70%)' }} />
-        <div className="auth-orb w-[260px] h-[260px] -bottom-16 left-1/3 animate-orb-slow"
-          style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.4) 0%, transparent 70%)', animationDelay: '4s' }} />
-        <div className="auth-orb w-[180px] h-[180px] top-1/3 right-1/3 animate-orb"
-          style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.25) 0%, transparent 70%)', animationDelay: '7s' }} />
-
-        {/* Dot-grid overlay */}
-        <div className="absolute inset-0 opacity-[0.07]"
+        {/* Dot-grid texture */}
+        <div className="absolute inset-0 opacity-[0.06]"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
           }} />
 
-        {/* Top fade */}
-        <div className="absolute inset-x-0 top-0 h-32 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, rgba(6,8,26,0.6), transparent)' }} />
+        {/* Subtle edge glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 40% 50%, rgba(99,102,241,0.1) 0%, transparent 65%)' }} />
 
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/15"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #4c6ef5)', boxShadow: '0 0 20px rgba(124,58,237,0.5)' }}>
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/10"
+            style={{ background: '#6366f1', boxShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
+            <Sparkles className="w-4.5 h-4.5 text-white" />
           </div>
           <span className="text-white font-bold text-xl tracking-tight">DocQA</span>
-          <span className="text-white/30 font-mono text-xs ml-0.5">AI</span>
+          <span className="text-white/25 font-mono text-xs">AI</span>
         </div>
 
         {/* Centre content */}
         <div className="relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 text-white/60 text-xs font-medium"
-            style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(8px)' }}>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-white/50 text-xs font-medium"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
             Free to get started
           </div>
 
           <div>
-            <h2 className="text-5xl font-bold text-white leading-[1.1] mb-4">
+            <h2 className="text-5xl font-bold text-white leading-[1.08] mb-4">
               Chat with any<br />
               <span style={{
-                background: 'linear-gradient(90deg, #c4b5fd, #93c5fd, #a78bfa)',
+                background: 'linear-gradient(90deg, #a5b4fc, #818cf8, #6366f1)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}>
                 document, fast.
               </span>
             </h2>
-            <p className="text-white/45 text-base leading-relaxed max-w-xs">
+            <p className="text-white/40 text-base leading-relaxed max-w-xs">
               Upload PDFs and text files. Ask anything. Get precise, cited answers in seconds.
             </p>
           </div>
 
-          {/* Feature checklist */}
-          <div className="space-y-3.5 animate-float" style={{ filter: 'drop-shadow(0 16px 32px rgba(0,0,0,0.4))' }}>
+          {/* Feature list */}
+          <div className="space-y-3">
             {PERKS.map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-3.5 px-4 py-3 rounded-xl"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.07)',
                   backdropFilter: 'blur(16px)',
                 }}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(139,92,246,0.2)', border: '1px solid rgba(139,92,246,0.25)' }}>
-                  <Icon className="w-4 h-4 text-violet-300" />
+                  style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                  <Icon className="w-4 h-4 text-brand-300" />
                 </div>
-                <span className="text-white/70 text-sm leading-snug flex-1">{label}</span>
+                <span className="text-white/65 text-sm leading-snug flex-1">{label}</span>
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
               </div>
             ))}
@@ -148,7 +138,7 @@ const Register = () => {
 
         {/* Footer */}
         <div className="relative z-10">
-          <p className="text-white/20 text-xs tracking-wide">MongoDB · Pinecone · Google Gemini · FastAPI · React</p>
+          <p className="text-white/15 text-xs tracking-wide">MongoDB · Pinecone · Google Gemini · FastAPI · React</p>
         </div>
       </div>
 
@@ -157,14 +147,14 @@ const Register = () => {
         style={{ background: '#0a0c1e' }}>
 
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(124,58,237,0.07) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(99,102,241,0.07) 0%, transparent 60%)' }} />
 
         <div className="w-full max-w-sm animate-fadeUp relative z-10">
 
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center justify-center gap-2.5 mb-10">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #4c6ef5)', boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}>
+              style={{ background: '#6366f1', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}>
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-white text-lg tracking-tight">DocQA</span>
@@ -178,14 +168,14 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="px-4 py-3 rounded-xl text-sm flex items-start gap-2.5"
-                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}>
+                style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', color: '#f87171' }}>
                 <span className="mt-0.5 shrink-0">⚠</span>
                 {error}
               </div>
             )}
 
-            <DarkInput label="Name"     type="text"     placeholder="Your name"          value={name}     onChange={setName}     required autoFocus />
-            <DarkInput label="Email"    type="email"    placeholder="you@example.com"    value={email}    onChange={setEmail}    required />
+            <DarkInput label="Name"     type="text"     placeholder="Your name"             value={name}     onChange={setName}     required autoFocus />
+            <DarkInput label="Email"    type="email"    placeholder="you@example.com"       value={email}    onChange={setEmail}    required />
             <DarkInput label="Password" type="password" placeholder="At least 6 characters" value={password} onChange={setPassword} required minLength={6} />
 
             <button
@@ -193,8 +183,8 @@ const Register = () => {
               disabled={loading}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold text-sm transition-all duration-200 active:scale-[0.97] mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                background: 'linear-gradient(135deg, #7c3aed, #4c6ef5)',
-                boxShadow: loading ? 'none' : '0 0 24px rgba(124,58,237,0.4), 0 4px 12px rgba(0,0,0,0.3)',
+                background: '#6366f1',
+                boxShadow: loading ? 'none' : '0 0 0 1px rgba(99,102,241,0.5), 0 4px 20px rgba(99,102,241,0.3)',
               }}
             >
               {loading ? (
@@ -213,16 +203,13 @@ const Register = () => {
               <div className="w-full" style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
             </div>
             <div className="relative flex justify-center">
-              <span className="px-3 text-xs text-slate-600" style={{ background: '#0a0c1e' }}>or</span>
+              <span className="px-3 text-xs text-slate-700" style={{ background: '#0a0c1e' }}>or</span>
             </div>
           </div>
 
           <p className="text-center text-sm text-slate-500">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold transition-colors duration-150"
-              style={{ color: '#748ffc' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#91a7ff')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#748ffc')}>
+            <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors duration-150">
               Sign in
             </Link>
           </p>

@@ -43,8 +43,6 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   useEffect(() => {
     if (sessionId) {
       setCurrentSessionId(sessionId);
-      // Skip fetching if this session was just generated locally by handleSend —
-      // it hasn't been saved to the DB yet so the request would 404.
       if (sessionId !== pendingLocalSessionRef.current) {
         loadSession(sessionId);
       }
@@ -149,8 +147,6 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
       setMessages((data.chat?.messages as Message[]) || []);
     } catch (err: unknown) {
       setMessages([]);
-      // Session doesn't exist on the server (generated locally but never saved).
-      // Clear it so the UI doesn't keep trying to load it.
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 404) {
         setCurrentSessionId('');
@@ -173,7 +169,6 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
         onSessionChange(sid);
       }
 
-      // Clear suggestions on old messages when user asks something new
       setMessages((prev) => [
         ...prev.map((m) => ({ ...m, suggestions: undefined })),
         { role: 'user', content: question, sources: [], timestamp: new Date().toISOString() },
@@ -209,18 +204,22 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto px-4 py-6 bg-mesh">
+      {/* Message area — full dark */}
+      <div className="flex-1 overflow-y-auto px-4 py-6" style={{ background: '#0c0c0f' }}>
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && !streamingContent && (
-            <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-3xl flex items-center justify-center mb-5 shadow-xl shadow-brand-200 rotate-3 hover:rotate-0 transition-transform duration-300">
-                <Sparkles className="w-10 h-10 text-white" />
+            <div className="flex flex-col items-center justify-center h-full min-h-[320px] text-center">
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: '#6366f1', boxShadow: '0 0 32px rgba(99,102,241,0.3)' }}
+              >
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-xl font-bold gradient-text mb-2">Ask your documents</h2>
-              <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
+              <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
                 {noDocsSelected
-                  ? 'Upload and select documents from the sidebar, then ask questions about them.'
-                  : 'Type a question below to get AI-powered answers with source citations and voice playback.'}
+                  ? 'Select documents from the sidebar, then ask questions about them.'
+                  : 'Type a question below to get AI-powered answers with source citations.'}
               </p>
               {!noDocsSelected && (
                 <div className="mt-6 flex gap-2 flex-wrap justify-center">
@@ -228,7 +227,20 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
                     <button
                       key={q}
                       onClick={() => handleSend(q)}
-                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-gray-500 shadow-sm hover:border-brand-200 hover:text-brand-600 transition-colors"
+                      className="px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        color: '#94a3b8',
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(99,102,241,0.35)';
+                        (e.currentTarget as HTMLButtonElement).style.color = '#a5b4fc';
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                        (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
+                      }}
                     >
                       {q}
                     </button>
