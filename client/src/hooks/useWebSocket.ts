@@ -70,8 +70,16 @@ export const useWebSocket = (): WebSocketHook => {
       reconnectTimerRef.current = null;
     }
     if (wsRef.current) {
-      wsRef.current.close();
+      const ws = wsRef.current;
       wsRef.current = null;
+      // Null handlers before closing to prevent stale state updates after unmount
+      ws.onopen = null;
+      ws.onclose = null;
+      ws.onerror = null;
+      ws.onmessage = null;
+      if (ws.readyState < WebSocket.CLOSING) {
+        ws.close();
+      }
     }
   }, []);
 

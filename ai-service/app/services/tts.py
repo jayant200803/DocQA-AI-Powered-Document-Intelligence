@@ -32,7 +32,7 @@ def _pcm_to_wav(pcm: bytes, sample_rate: int = 24000, channels: int = 1, bits: i
     return header + pcm
 
 
-def synthesize(text: str, voice: str = "Kore") -> bytes:
+async def synthesize(text: str, voice: str = "Kore") -> bytes:
     """
     Call Gemini TTS and return WAV bytes.
     Uses gemini-2.5-flash-preview-tts — free via AI Studio key.
@@ -54,16 +54,21 @@ def synthesize(text: str, voice: str = "Kore") -> bytes:
         },
     }
 
-    response = httpx.post(
-        f"{_BASE}/{TTS_MODEL}:generateContent",
-        params={"key": settings.google_api_key},
-        json=payload,
-        timeout=60.0,
-    )
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            f"{_BASE}/{TTS_MODEL}:generateContent",
+            params={"key": settings.google_api_key},
+            json=payload,
+        )
+
     response.raise_for_status()
 
     data = response.json()
-    inline = data["candidates"][0]["content"]["parts"][0]["inlineData"]
+    try:
+        inline = data["candidates"][0]["content"]["parts"][0]["inlineData"]
+    except (KeyError, IndexError) as exc:
+        raise ValueError(f"Unexpected TTS response structure: {exc}") from exc
+
     pcm = base64.b64decode(inline["data"])
 
     # Extract sample rate from mimeType e.g. "audio/pcm;rate=24000"

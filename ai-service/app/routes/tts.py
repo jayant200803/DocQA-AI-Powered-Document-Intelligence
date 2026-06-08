@@ -17,7 +17,7 @@ async def text_to_speech(req: TTSRequest):
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="text is required")
     try:
-        wav = synthesize(req.text[:4000], req.voice)  # cap at 4000 chars
+        wav = await synthesize(req.text[:4000], req.voice)  # cap at 4000 chars
         return Response(
             content=wav,
             media_type="audio/wav",
