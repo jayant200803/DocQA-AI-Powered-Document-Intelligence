@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/auth.routes.js';
@@ -11,37 +12,48 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
-// Middleware
+// ── CORS ───────────────────────────────────────────────────────────────────
+// Build allowed-origins list at startup so it's stable for the process lifetime.
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. curl, Postman, server-to-server)
+    // Allow no-origin requests (curl, Postman, server-to-server callbacks)
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS: origin ${origin} not allowed`));
+      return callback(null, true);
     }
+    console.warn(`CORS blocked: ${origin}`);
+    callback(new Error(`Origin ${origin} is not allowed by CORS policy.`));
   },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length'],
+  optionsSuccessStatus: 204,
+};
+
+// Handle pre-flight for every route first, before any other middleware.
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
+
+// ── Body parsing ────────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// ── Rate limiting ───────────────────────────────────────────────────────────
 app.use('/api', apiLimiter);
 
-// Ensure uploads directory exists
-import fs from 'fs';
+// ── Uploads directory ───────────────────────────────────────────────────────
 const uploadsDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Routes
+// ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/chat', chatRoutes);
@@ -51,15 +63,22 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', service: 'server' });
 });
 
-// Error handling middleware
+// ── Global error handler ─────────────────────────────────────────────────────
+// Must run AFTER cors() so CORS headers are already set.  If an error occurs
+// after headers are sent, Express skips this — nothing we can do about that.
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  console.error('Unhandled error:', err.message || err);
 
   if (err.name === 'MulterError') {
-    if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File too large. Maximum size is 10MB.' });
-    }
-    return res.status(400).json({ error: err.message });
+    const msg = err.code === 'LIMIT_FILE_SIZE'
+      ? 'File too large. Maximum size is 10 MB.'
+      : err.message;
+    return res.status(400).json({ error: msg });
+  }
+
+  // CORS policy error (thrown from origin callback)
+  if (err.message?.startsWith('Origin ') && err.message.includes('CORS')) {
+    return res.status(403).json({ error: err.message });
   }
 
   res.status(500).json({ error: 'Internal server error.' });
