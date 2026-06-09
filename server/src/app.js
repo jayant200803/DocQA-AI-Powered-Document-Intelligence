@@ -1,14 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/auth.routes.js';
 import documentRoutes from './routes/document.routes.js';
 import chatRoutes from './routes/chat.routes.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -46,12 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // ── Rate limiting ───────────────────────────────────────────────────────────
 app.use('/api', apiLimiter);
-
-// ── Uploads directory ───────────────────────────────────────────────────────
-const uploadsDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);

@@ -80,9 +80,13 @@ export const documentAPI = {
   upload: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    // Do NOT set Content-Type manually — the browser must set it automatically
-    // so the required multipart boundary parameter is included.
-    return api.post('/documents/upload', formData);
+    // Set Content-Type to null to remove the instance-level 'application/json' default.
+    // Axios 1.x will otherwise detect the JSON header and convert FormData to JSON,
+    // which causes multer on the server to receive no file (400 "No file uploaded").
+    // With null, the browser sets the correct multipart/form-data; boundary=... header.
+    return api.post('/documents/upload', formData, {
+      headers: { 'Content-Type': null },
+    });
   },
   list: () => api.get('/documents'),
   get: (id: string) => api.get(`/documents/${id}`),
