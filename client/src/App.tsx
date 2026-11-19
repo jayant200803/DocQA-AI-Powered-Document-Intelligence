@@ -13,8 +13,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0c0c0f' }}>
-        <div className="w-7 h-7 border-2 border-white/10 border-t-brand-500 rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-chat">
+        <div className="w-7 h-7 border-2 border-line border-t-accent rounded-full animate-spin" />
       </div>
     );
   }
@@ -67,7 +67,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: '#0c0c0f' }}>
+    <div className="h-screen flex flex-col bg-chat">
       <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex-1 flex min-h-0">
