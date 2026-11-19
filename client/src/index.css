@@ -84,6 +84,16 @@
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
   }
 
+  /* ── Chip — prompt starters and follow-up suggestions ── */
+  .chip {
+    @apply inline-flex items-center px-3 py-1.5 text-xs font-medium transition-colors duration-150;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  .chip:hover { color: var(--text); border-color: var(--border-strong); }
+
   /* ── Chat input wrap ─────────────────────────────── */
   .chat-input-wrap {
     @apply transition-colors duration-150;
