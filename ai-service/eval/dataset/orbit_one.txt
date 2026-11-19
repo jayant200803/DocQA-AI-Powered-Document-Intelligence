@@ -1,0 +1,31 @@
+Orbit One Smartwatch — Product Overview
+
+The Orbit One is a smartwatch made by Lumen, released in March 2026. It is designed
+for everyday fitness tracking and notifications while keeping a long battery life.
+
+Display and Design
+The Orbit One has a 1.4-inch AMOLED display with a resolution of 454 by 454 pixels.
+The case is made of aircraft-grade aluminium and the watch weighs 32 grams without
+the strap. It is available in three colours: midnight black, sage green, and rose gold.
+
+Battery and Charging
+In typical use the battery lasts 7 days on a single charge. In low-power mode, where
+the always-on display is turned off, it lasts up to 14 days. Charging is done through a
+magnetic charger that takes the watch from 0 to 100 percent in 90 minutes.
+
+Health and Sensors
+The Orbit One includes a heart rate sensor, an SpO2 (blood oxygen) sensor, built-in
+GPS, and an accelerometer for step counting and sleep tracking. It does not include an
+ECG sensor or a blood pressure sensor.
+
+Water Resistance
+The watch is rated 5 ATM, which means it can be worn while swimming in water up to
+50 metres deep. It is not designed for scuba diving.
+
+Compatibility
+The Orbit One works with phones running Android 9 or newer, and iPhones running
+iOS 14 or newer. The companion app is called Lumen Fit.
+
+Price and Warranty
+The Orbit One is priced at $199. It comes with a 2-year limited warranty that covers
+manufacturing defects.
