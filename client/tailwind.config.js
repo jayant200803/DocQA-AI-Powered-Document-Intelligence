@@ -17,6 +17,15 @@ export default {
           900: '#312e81',
           950: '#1e1b4b',
         },
+        // Design tokens (defined in index.css :root) — use these in screens.
+        surface: 'var(--surface-1)',
+        'surface-2': 'var(--surface-2)',
+        ink: 'var(--text)',
+        muted: 'var(--text-muted)',
+        faint: 'var(--text-faint)',
+        line: 'var(--border)',
+        'line-strong': 'var(--border-strong)',
+        accent: { DEFAULT: 'var(--accent)', hover: 'var(--accent-hover)' },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
