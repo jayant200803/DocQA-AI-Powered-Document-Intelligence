@@ -5,6 +5,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.services.retriever import retrieve_similar_chunks
 from app.services.generator import generate_answer, generate_answer_stream
+from app.services.evaluator import is_context_sufficient
+from app.utils.prompts import ABSTAIN_MESSAGE
 from app.config.settings import get_settings
 
 router = APIRouter()
@@ -41,19 +43,18 @@ async def query_documents(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Retrieval failed: {str(e)}")
 
-    if not chunks:
+    # 2. Refuse to answer when the documents don't actually cover the question.
+    #    Empty retrieval, or a grader that says the context isn't enough, both abstain.
+    if not chunks or not is_context_sufficient(request.question, chunks):
         if request.stream:
             return StreamingResponse(
                 _no_results_stream(),
                 media_type="text/event-stream",
                 headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
             )
-        return {
-            "answer": "I couldn't find any relevant information in your documents for this question.",
-            "sources": [],
-        }
+        return {"answer": ABSTAIN_MESSAGE, "sources": []}
 
-    # 2. Generate answer
+    # 3. Generate answer
     if request.stream:
         return StreamingResponse(
             _stream_response(request.question, chunks),
@@ -75,10 +76,9 @@ async def query_documents(request: QueryRequest):
 
 
 async def _no_results_stream():
-    """SSE stream for when no relevant chunks are found."""
-    no_results_msg = "I couldn't find any relevant information in your documents for this question."
+    """SSE stream for when the documents can't answer the question."""
     yield f"data: {json.dumps({'type': 'sources', 'data': []})}\n\n"
-    yield f"data: {json.dumps({'type': 'token', 'data': no_results_msg})}\n\n"
+    yield f"data: {json.dumps({'type': 'token', 'data': ABSTAIN_MESSAGE})}\n\n"
     yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
 
