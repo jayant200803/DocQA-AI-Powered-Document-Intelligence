@@ -1,6 +1,7 @@
 from pinecone import Pinecone
 from app.config.settings import get_settings
 from app.services.embedder import generate_single_embedding
+from app.services.rank import bm25_scores, reciprocal_rank_fusion
 
 _index = None
 
@@ -78,6 +79,25 @@ def retrieve_similar_chunks(query: str, document_ids: list[str], top_k: int = 5)
     # Sort by relevance and return top_k
     all_results.sort(key=lambda x: x["relevanceScore"], reverse=True)
     return all_results[:top_k]
+
+
+def retrieve_hybrid(query: str, document_ids: list[str], top_k: int = 5, pool: int = 20) -> list[dict]:
+    """Retrieve with vector search + BM25, fused by reciprocal rank.
+
+    Pulls a larger candidate pool by vector similarity, then re-ranks it by
+    blending the vector order with a BM25 keyword order. Catches exact terms
+    pure vector search would miss, without a second index.
+    """
+    candidates = retrieve_similar_chunks(query, document_ids, top_k=pool)
+    if len(candidates) <= top_k:
+        return candidates[:top_k]
+
+    vector_ranking = list(range(len(candidates)))  # already sorted by vector score
+    bm25 = bm25_scores(query, [c["chunkText"] for c in candidates])
+    bm25_ranking = sorted(range(len(candidates)), key=lambda i: bm25[i], reverse=True)
+
+    fused = reciprocal_rank_fusion([vector_ranking, bm25_ranking])
+    return [candidates[i] for i in fused[:top_k]]
 
 
 def delete_document_vectors(document_id: str):

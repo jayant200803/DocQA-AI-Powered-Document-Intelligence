@@ -3,7 +3,9 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from app.services.retriever import retrieve_similar_chunks
+from app.services.retriever import retrieve_hybrid
+from app.services.query_transform import rewrite_query
+from app.services.reranker import rerank
 from app.services.generator import generate_answer, generate_answer_stream
 from app.services.evaluator import is_context_sufficient
 from app.utils.prompts import ABSTAIN_MESSAGE
@@ -33,13 +35,16 @@ async def query_documents(request: QueryRequest):
     if not request.document_ids:
         raise HTTPException(status_code=400, detail="At least one document ID is required")
 
-    # 1. Retrieve similar chunks
+    # 1. Rewrite the question for retrieval, fetch with hybrid search, then
+    #    rerank so only the chunks that actually answer it reach the model.
     try:
-        chunks = retrieve_similar_chunks(
-            query=request.question,
+        search_query = rewrite_query(request.question)
+        chunks = retrieve_hybrid(
+            query=search_query,
             document_ids=request.document_ids,
             top_k=settings.top_k,
         )
+        chunks = rerank(request.question, chunks, top_k=settings.top_k)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Retrieval failed: {str(e)}")
 

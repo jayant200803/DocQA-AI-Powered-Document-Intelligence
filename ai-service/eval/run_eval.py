@@ -22,7 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config.settings import get_settings
 from app.services.chunker import chunk_text
 from app.services.embedder import generate_embeddings
-from app.services.retriever import store_vectors, retrieve_similar_chunks, delete_document_vectors
+from app.services.retriever import store_vectors, retrieve_hybrid, delete_document_vectors
+from app.services.query_transform import rewrite_query
+from app.services.reranker import rerank
 from app.services.evaluator import is_context_sufficient
 from app.services.generator import generate_answer
 from app.utils.prompts import build_context_string, ABSTAIN_MESSAGE
@@ -76,7 +78,9 @@ def judge_faithful(answer: str, chunks: list[dict]) -> bool:
 def answer_question(question: str):
     """Run one question through the real pipeline. Returns (answer, chunks, abstained)."""
     settings = get_settings()
-    chunks = retrieve_similar_chunks(question, [DOC_ID], top_k=settings.top_k)
+    search_query = rewrite_query(question)
+    chunks = retrieve_hybrid(search_query, [DOC_ID], top_k=settings.top_k)
+    chunks = rerank(question, chunks, top_k=settings.top_k)
     if not chunks or not is_context_sufficient(question, chunks):
         return ABSTAIN_MESSAGE, chunks, True
     answer = generate_answer(question, chunks)
