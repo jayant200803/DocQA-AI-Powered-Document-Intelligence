@@ -100,6 +100,44 @@ def retrieve_hybrid(query: str, document_ids: list[str], top_k: int = 5, pool: i
     return [candidates[i] for i in fused[:top_k]]
 
 
+def load_full_context(document_ids: list[str], max_chunks: int) -> list[dict] | None:
+    """Return every chunk of the selected documents, whole-document (CAG).
+
+    For a small document it is better to give the model the entire text than a
+    retrieved subset — no chunk-boundary misses, no retrieval step. Returns None
+    when the documents total more than max_chunks, so the caller falls back to
+    retrieval. Probes with a constant vector purely to page through the
+    namespace; order does not matter since chunks are re-sorted by index.
+    """
+    settings = get_settings()
+    index = _get_index()
+    probe = [1.0] * settings.embedding_dimensions
+
+    all_chunks = []
+    total = 0
+    for doc_id in document_ids:
+        response = index.query(
+            vector=probe,
+            top_k=max_chunks + 1,
+            include_metadata=True,
+            namespace=doc_id,
+        )
+        total += len(response.matches)
+        if total > max_chunks:
+            return None  # too large for whole-document context
+        for match in response.matches:
+            all_chunks.append({
+                "documentId": match.metadata.get("documentId", ""),
+                "fileName": match.metadata.get("fileName", "Unknown"),
+                "chunkText": match.metadata.get("chunkText", ""),
+                "chunkIndex": match.metadata.get("chunkIndex", 0),
+                "relevanceScore": 1.0,
+            })
+
+    all_chunks.sort(key=lambda c: (c["documentId"], c["chunkIndex"]))
+    return all_chunks
+
+
 def delete_document_vectors(document_id: str):
     """Delete all vectors for a document (by namespace)."""
     index = _get_index()

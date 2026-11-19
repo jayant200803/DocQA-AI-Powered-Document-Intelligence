@@ -21,6 +21,9 @@ class Settings(BaseSettings):
 
     # Retrieval config
     top_k: int = 5
+    # CAG: if the selected documents total at most this many chunks, skip
+    # retrieval and load them whole (context-augmented generation).
+    cag_max_chunks: int = 12
 
     # Node.js server callback URL (AI service → Node.js after ingestion)
     server_callback_url: str = "http://localhost:5000"
