@@ -1,7 +1,12 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { Sparkles, ArrowRight, Shield, BarChart2, Brain, Check } from 'lucide-react';
+import { AuroraBackground } from '@/components/ui/aurora-background';
+import { GlassCard } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const PERKS = [
   { icon: Brain,     label: 'Gemini 2.5 Flash for deep document understanding' },
@@ -9,24 +14,10 @@ const PERKS = [
   { icon: Shield,    label: 'Your documents stay private — never shared' },
 ];
 
-const DarkInput = ({
-  label, type, placeholder, value, onChange, required, autoFocus, minLength,
-}: {
-  label: string; type: string; placeholder: string; value: string;
-  onChange: (v: string) => void; required?: boolean; autoFocus?: boolean; minLength?: number;
-}) => (
+const Field = ({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) => (
   <div>
-    <label className="block text-[11px] font-semibold text-muted uppercase tracking-wider mb-2">{label}</label>
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      required={required}
-      autoFocus={autoFocus}
-      minLength={minLength}
-      className="input-field"
-    />
+    <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</label>
+    <Input {...props} />
   </div>
 );
 
@@ -57,123 +48,101 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-chat">
+    <AuroraBackground className="min-h-screen">
+      <div className="flex min-h-screen flex-1 items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2"
+        >
+          {/* ── Left: pitch ─────────────────────────────── */}
+          <div className="hidden select-none flex-col gap-7 lg:flex">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-gradient shadow-btn-glow">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-xl font-semibold tracking-tight text-ink">DocQA</span>
+              <span className="font-mono text-xs text-faint">AI</span>
+            </div>
 
-      {/* ── Left decorative panel ─────────────────────── */}
-      <div className="hidden lg:flex lg:w-[55%] bg-auth relative overflow-hidden flex-col justify-between p-14 select-none border-r border-line">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-[rgba(21,23,25,0.6)] px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur-md">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+              Free to get started
+            </div>
 
-        {/* Dot-grid texture */}
-        <div className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
-          }} />
-
-        {/* Logo */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center card">
-            <Sparkles className="w-4 h-4 text-accent" />
-          </div>
-          <span className="text-ink font-semibold text-xl tracking-tight">DocQA</span>
-          <span className="text-faint font-mono text-xs">AI</span>
-        </div>
-
-        {/* Centre content */}
-        <div className="relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-muted text-xs font-medium bg-surface-2 border border-line">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            Free to get started
-          </div>
-
-          <div>
-            <h2 className="text-5xl font-semibold text-ink leading-[1.08] mb-4">
+            <h2 className="text-5xl font-semibold leading-[1.08] text-ink">
               Chat with any<br />
-              <span className="text-accent">document, fast.</span>
+              <span className="bg-accent-gradient bg-clip-text text-transparent">document, fast.</span>
             </h2>
-            <p className="text-muted text-base leading-relaxed max-w-xs">
+            <p className="max-w-sm text-base leading-relaxed text-muted">
               Upload PDFs and text files. Ask anything. Get precise, cited answers in seconds.
             </p>
+
+            <div className="flex flex-col gap-3">
+              {PERKS.map(({ icon: Icon, label }) => (
+                <GlassCard key={label} className="flex items-center gap-3.5 px-4 py-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface-2">
+                    <Icon className="h-4 w-4 text-accent" />
+                  </div>
+                  <span className="flex-1 text-sm leading-snug text-muted">{label}</span>
+                  <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                </GlassCard>
+              ))}
+            </div>
           </div>
 
-          {/* Feature list */}
-          <div className="space-y-3">
-            {PERKS.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-3.5 px-4 py-3 rounded-lg card">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-surface-2 border border-line">
-                  <Icon className="w-4 h-4 text-accent" />
+          {/* ── Right: auth card ────────────────────────── */}
+          <GlassCard className="w-full p-8">
+            <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-gradient shadow-btn-glow">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-lg font-semibold tracking-tight text-ink">DocQA</span>
+            </div>
+
+            <div className="mb-8">
+              <h1 className="mb-1.5 text-2xl font-semibold text-ink">Create your account</h1>
+              <p className="text-sm text-muted">Start querying documents with AI — free</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="flex items-start gap-2.5 rounded-lg border border-[rgba(239,68,68,0.18)] bg-[rgba(239,68,68,0.07)] px-4 py-3 text-sm text-red-400">
+                  <span className="mt-0.5 shrink-0">⚠</span>
+                  {error}
                 </div>
-                <span className="text-muted text-sm leading-snug flex-1">{label}</span>
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="relative z-10">
-          <p className="text-faint text-xs tracking-wide">MongoDB · Pinecone · Google Gemini · FastAPI · React</p>
-        </div>
-      </div>
-
-      {/* ── Right form panel ──────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-chat">
-        <div className="w-full max-w-sm animate-fadeUp">
-
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center justify-center gap-2.5 mb-10">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center card">
-              <Sparkles className="w-4 h-4 text-accent" />
-            </div>
-            <span className="font-semibold text-ink text-lg tracking-tight">DocQA</span>
-          </div>
-
-          <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-ink mb-1.5">Create your account</h1>
-            <p className="text-muted text-sm">Start querying documents with AI — free</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="px-4 py-3 rounded-lg text-sm flex items-start gap-2.5 bg-[rgba(239,68,68,0.07)] border border-[rgba(239,68,68,0.18)] text-red-400">
-                <span className="mt-0.5 shrink-0">⚠</span>
-                {error}
-              </div>
-            )}
-
-            <DarkInput label="Name"     type="text"     placeholder="Your name"             value={name}     onChange={setName}     required autoFocus />
-            <DarkInput label="Email"    type="email"    placeholder="you@example.com"       value={email}    onChange={setEmail}    required />
-            <DarkInput label="Password" type="password" placeholder="At least 6 characters" value={password} onChange={setPassword} required minLength={6} />
-
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2 py-3">
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creating account…
-                </>
-              ) : (
-                <>Create account <ArrowRight className="w-4 h-4" /></>
               )}
-            </button>
-          </form>
+              <Field label="Name" type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
+              <Field label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Field label="Password" type="password" placeholder="At least 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+              <Button type="submit" size="lg" disabled={loading} className="mt-2 w-full">
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Creating account…
+                  </>
+                ) : (
+                  <>Create account <ArrowRight className="h-4 w-4" /></>
+                )}
+              </Button>
+            </form>
 
-          <div className="relative my-7">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full h-px bg-line" />
+            <div className="relative my-7">
+              <div className="absolute inset-0 flex items-center"><div className="h-px w-full bg-line" /></div>
+              <div className="relative flex justify-center"><span className="bg-surface px-3 text-xs text-faint">or</span></div>
             </div>
-            <div className="relative flex justify-center">
-              <span className="px-3 text-xs text-faint bg-chat">or</span>
-            </div>
-          </div>
 
-          <p className="text-center text-sm text-muted">
-            Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-accent hover:text-accent-hover transition-colors duration-150">
-              Sign in
-            </Link>
-          </p>
-        </div>
+            <p className="text-center text-sm text-muted">
+              Already have an account?{' '}
+              <Link to="/login" className="font-semibold text-accent transition-colors hover:text-accent-hover">
+                Sign in
+              </Link>
+            </p>
+          </GlassCard>
+        </motion.div>
       </div>
-    </div>
+    </AuroraBackground>
   );
 };
 
