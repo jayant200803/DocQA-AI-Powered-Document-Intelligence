@@ -4,7 +4,11 @@ import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: join(__dirname, '../.env') });
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// Only relax TLS verification in local development — never in production,
+// where it would expose every outbound connection (incl. the database) to MITM.
+if (process.env.NODE_ENV !== 'production') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 import http from 'http';
 import app from './src/app.js';
 import connectDB from './src/config/db.js';

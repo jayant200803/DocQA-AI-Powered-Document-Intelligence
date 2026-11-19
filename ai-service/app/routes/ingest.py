@@ -18,12 +18,17 @@ PROGRESS_STEPS = [
 ]
 
 
+def _internal_headers() -> dict:
+    return {"X-Internal-Secret": get_settings().internal_api_secret}
+
+
 async def _send_progress(client: httpx.AsyncClient, callback_url: str, document_id: str, step: str, index: int):
     """Fire-and-forget progress update — non-fatal on failure."""
     try:
         await client.patch(
             f"{callback_url}/api/documents/{document_id}/progress",
             json={"step": step, "index": index},
+            headers=_internal_headers(),
             timeout=5.0,
         )
     except Exception:
@@ -67,6 +72,7 @@ async def _process_document(file_path: str, document_id: str, user_id: str, file
             await client.patch(
                 f"{callback_url}/api/documents/{document_id}/status",
                 json=payload,
+                headers=_internal_headers(),
                 timeout=10.0,
             )
 
@@ -77,6 +83,7 @@ async def _process_document(file_path: str, document_id: str, user_id: str, file
                 await client.patch(
                     f"{callback_url}/api/documents/{document_id}/status",
                     json={"status": "failed", "error": str(e)},
+                    headers=_internal_headers(),
                     timeout=10.0,
                 )
         except Exception:

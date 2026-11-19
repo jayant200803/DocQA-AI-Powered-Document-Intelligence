@@ -8,6 +8,7 @@ import {
   updateDocumentProgress,
 } from '../controllers/document.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
+import { internalAuth } from '../middleware/internalAuth.js';
 import { upload } from '../middleware/upload.middleware.js';
 import { uploadLimiter } from '../middleware/rateLimiter.js';
 
@@ -19,8 +20,8 @@ router.get('/', authenticate, getDocuments);
 router.get('/:id', authenticate, getDocument);
 router.delete('/:id', authenticate, deleteDocument);
 
-// Internal callbacks from AI service (no auth — should be behind firewall in production)
-router.patch('/:id/status', updateDocumentStatus);
-router.patch('/:id/progress', updateDocumentProgress);
+// Internal callbacks from the AI service — guarded by a shared secret.
+router.patch('/:id/status', internalAuth, updateDocumentStatus);
+router.patch('/:id/progress', internalAuth, updateDocumentProgress);
 
 export default router;

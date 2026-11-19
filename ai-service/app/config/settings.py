@@ -27,6 +27,8 @@ class Settings(BaseSettings):
 
     # Node.js server callback URL (AI service → Node.js after ingestion)
     server_callback_url: str = "http://localhost:5000"
+    # Shared secret for the progress/status callbacks to the Node server.
+    internal_api_secret: str = ""
 
     class Config:
         env_file = ".env"
