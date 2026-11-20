@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Brain, ShieldCheck, Zap, FileText, ArrowRight } from 'lucide-react';
-import { AuroraBackground } from '@/components/ui/aurora-background';
+import { WaveMesh } from '@/components/ui/wave-mesh';
+import { MotionBlurText } from '@/components/ui/motion-blur-text';
 import { GlassCard } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Wordmark } from '@/components/ui/wordmark';
@@ -18,8 +19,8 @@ const FEATURES = [
 export default function Landing() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-chat">
-      {/* ── Hero (aurora backdrop) ───────────────────────── */}
-      <AuroraBackground className="min-h-[92vh]">
+      {/* ── Hero (wave-mesh backdrop) ────────────────────── */}
+      <WaveMesh className="flex min-h-[92vh] flex-col">
         <nav className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
           <Wordmark size="md" />
           <div className="flex items-center gap-2">
@@ -41,8 +42,8 @@ export default function Landing() {
             </div>
 
             <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-6xl">
-              Talk to your<br />
-              <span className="bg-accent-gradient bg-clip-text text-transparent">documents.</span>
+              <MotionBlurText>Talk to your</MotionBlurText><br />
+              <MotionBlurText delay={0.18} className="bg-accent-gradient bg-clip-text text-transparent">documents.</MotionBlurText>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Upload a PDF and ask anything. DocQA retrieves the right passages, reasons over them,
@@ -51,7 +52,7 @@ export default function Landing() {
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link to="/register">
-                <Button size="lg">Get started free <ArrowRight className="h-4 w-4" /></Button>
+                <Button size="lg" variant="smoky">Get started free <ArrowRight className="h-4 w-4" /></Button>
               </Link>
               <Link to="/login">
                 <Button size="lg" variant="secondary">Sign in</Button>
@@ -80,7 +81,7 @@ export default function Landing() {
             />
           </div>
         </section>
-      </AuroraBackground>
+      </WaveMesh>
 
       {/* ── Features ─────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-6 py-24">
@@ -137,7 +138,7 @@ export default function Landing() {
         <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Start asking your documents</h2>
         <p className="mt-3 text-muted">Free to try. No setup. Your data stays private.</p>
         <div className="mt-8">
-          <Link to="/register"><Button size="lg">Get started free <ArrowRight className="h-4 w-4" /></Button></Link>
+          <Link to="/register"><Button size="lg" variant="smoky">Get started free <ArrowRight className="h-4 w-4" /></Button></Link>
         </div>
         <div className="mt-16 flex items-center justify-center gap-2 border-t border-line pt-8">
           <Wordmark size="sm" />

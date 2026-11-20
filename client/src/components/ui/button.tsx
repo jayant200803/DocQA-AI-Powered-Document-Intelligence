@@ -12,6 +12,7 @@ const buttonVariants = cva(
         secondary: 'bg-surface-2 text-ink border border-line hover:border-line-strong',
         ghost: 'text-muted hover:text-ink hover:bg-white/5',
         outline: 'border border-line text-ink hover:bg-white/5',
+        smoky: 'btn-smoky rounded-full hover:brightness-110',
       },
       size: {
         default: 'h-10 px-4 py-2',
