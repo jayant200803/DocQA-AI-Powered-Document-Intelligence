@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles } from 'lucide-react';
+import GlassFolder from '@/components/ui/glass-folder-cards';
 import MessageBubble from './MessageBubble';
 import StreamingMessage from './StreamingMessage';
 import ChatInput from './ChatInput';
@@ -209,10 +209,20 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && !streamingContent && (
             <div className="flex flex-col items-center justify-center h-full min-h-[320px] text-center">
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-5 card">
-                <Sparkles className="w-6 h-6 text-accent" />
-              </div>
-              <h2 className="text-xl font-semibold text-ink mb-2">Ask your documents</h2>
+              <GlassFolder
+                tone="dark"
+                art="aurora"
+                width={288}
+                label="Your documents"
+                meta="ask anything"
+                action="none"
+                files={[
+                  { name: 'Report.pdf', meta: 'PDF', art: 'aurora' },
+                  { name: 'Notes.md', meta: 'TXT', art: 'dusk' },
+                  { name: 'Contract.pdf', meta: 'PDF' },
+                ]}
+              />
+              <h2 className="mt-2 text-xl font-semibold text-ink mb-2">Ask your documents</h2>
               <p className="text-sm text-muted max-w-sm leading-relaxed">
                 {noDocsSelected
                   ? 'Select documents from the sidebar, then ask questions about them.'
