@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { User, Bot, ChevronDown, ChevronUp, FileText, Copy, Check, RefreshCw } from 'lucide-react';
 import { Message, Source } from '../../types';
 import VoiceButton from './VoiceButton';
+import PipelineTrace from './PipelineTrace';
 
 interface SourceCardProps {
   source: Source;
@@ -72,6 +73,11 @@ const MessageBubble = ({ message, onRegenerate, onSuggestionClick }: MessageBubb
       )}
 
       <div className={`max-w-[75%] ${isUser ? 'order-first' : ''}`}>
+        {!isUser && message.pipeline && (
+          <div className="mb-2">
+            <PipelineTrace stages={message.pipeline} mode={message.mode || ''} done collapsible />
+          </div>
+        )}
         <div
           className={`px-4 py-3 rounded-lg text-sm leading-relaxed whitespace-pre-wrap ${
             isUser

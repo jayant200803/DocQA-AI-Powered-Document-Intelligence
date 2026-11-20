@@ -32,6 +32,8 @@ export interface Message {
   sources: Source[];
   timestamp: string;
   suggestions?: string[];
+  pipeline?: PipelineStage[];
+  mode?: string;
 }
 
 export interface ChatSession {

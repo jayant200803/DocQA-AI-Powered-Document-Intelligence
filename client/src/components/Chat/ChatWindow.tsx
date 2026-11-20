@@ -30,6 +30,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   const [streamingSources, setStreamingSources] = useState<Source[]>([]);
   const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>([]);
   const [pipelineMode, setPipelineMode] = useState('');
+  const pipelineRef = useRef<PipelineStage[]>([]);
+  const pipelineModeRef = useRef('');
   const [currentSessionId, setCurrentSessionId] = useState(sessionId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastQuestionRef = useRef('');
@@ -73,7 +75,9 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
   useEffect(() => {
     ws.on('stage', (msg: WsMessage) => {
-      setPipelineStages((prev) => [...prev, msg.data as PipelineStage]);
+      const stage = msg.data as PipelineStage;
+      pipelineRef.current = [...pipelineRef.current, stage];
+      setPipelineStages((prev) => [...prev, stage]);
     });
 
     ws.on('token', (msg: WsMessage) => {
@@ -82,7 +86,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
     ws.on('sources', (msg: WsMessage) => {
       setStreamingSources((msg.data as Source[]) || []);
-      if (msg.mode) setPipelineMode(msg.mode);
+      if (msg.mode) { setPipelineMode(msg.mode); pipelineModeRef.current = msg.mode; }
       if (msg.sessionId) {
         setCurrentSessionId(msg.sessionId);
         onSessionChange(msg.sessionId);
@@ -100,6 +104,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
               content: answer,
               sources: streamingSources,
               timestamp: new Date().toISOString(),
+              pipeline: pipelineRef.current.length ? [...pipelineRef.current] : undefined,
+              mode: pipelineModeRef.current || undefined,
             };
             const updated = [...prev, newMsg];
             const newMsgIdx = updated.length - 1;
@@ -121,6 +127,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
       setStreamingSources([]);
       setPipelineStages([]);
       setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
       ws.stopStreaming();
     });
 
@@ -129,6 +137,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
       setStreamingSources([]);
       setPipelineStages([]);
       setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
       ws.stopStreaming();
       setMessages((prev) => [
         ...prev,
@@ -176,6 +186,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
       suggestionsFetchedRef.current = false;
       setPipelineStages([]);
       setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
 
       const sid = currentSessionId || genId();
       if (!currentSessionId) {
