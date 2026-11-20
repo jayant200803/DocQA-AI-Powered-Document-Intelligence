@@ -3,9 +3,10 @@ import GlassFolder from '@/components/ui/glass-folder-cards';
 import MessageBubble from './MessageBubble';
 import StreamingMessage from './StreamingMessage';
 import ChatInput from './ChatInput';
+import PipelineTrace from './PipelineTrace';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import { chatAPI } from '../../services/api';
-import { Message, Source, WsMessage } from '../../types';
+import { Message, Source, WsMessage, PipelineStage } from '../../types';
 
 const AI_URL = import.meta.env.VITE_AI_URL || 'http://localhost:8000';
 
@@ -27,6 +28,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingContent, setStreamingContent] = useState('');
   const [streamingSources, setStreamingSources] = useState<Source[]>([]);
+  const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>([]);
+  const [pipelineMode, setPipelineMode] = useState('');
   const [currentSessionId, setCurrentSessionId] = useState(sessionId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastQuestionRef = useRef('');
@@ -69,12 +72,17 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   };
 
   useEffect(() => {
+    ws.on('stage', (msg: WsMessage) => {
+      setPipelineStages((prev) => [...prev, msg.data as PipelineStage]);
+    });
+
     ws.on('token', (msg: WsMessage) => {
       setStreamingContent((prev) => prev + (msg.data as string));
     });
 
     ws.on('sources', (msg: WsMessage) => {
       setStreamingSources((msg.data as Source[]) || []);
+      if (msg.mode) setPipelineMode(msg.mode);
       if (msg.sessionId) {
         setCurrentSessionId(msg.sessionId);
         onSessionChange(msg.sessionId);
@@ -111,12 +119,16 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
         return '';
       });
       setStreamingSources([]);
+      setPipelineStages([]);
+      setPipelineMode('');
       ws.stopStreaming();
     });
 
     ws.on('error', (msg: WsMessage) => {
       setStreamingContent('');
       setStreamingSources([]);
+      setPipelineStages([]);
+      setPipelineMode('');
       ws.stopStreaming();
       setMessages((prev) => [
         ...prev,
@@ -130,6 +142,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
     });
 
     return () => {
+      ws.off('stage');
       ws.off('token');
       ws.off('sources');
       ws.off('done');
@@ -161,6 +174,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
       lastQuestionRef.current = question;
       suggestionsFetchedRef.current = false;
+      setPipelineStages([]);
+      setPipelineMode('');
 
       const sid = currentSessionId || genId();
       if (!currentSessionId) {
@@ -248,6 +263,12 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
               onSuggestionClick={handleSuggestionClick}
             />
           ))}
+
+          {ws.isStreaming && pipelineStages.length > 0 && (
+            <div className="flex justify-start">
+              <PipelineTrace stages={pipelineStages} mode={pipelineMode} done={!!streamingContent} />
+            </div>
+          )}
 
           {streamingContent && <StreamingMessage content={streamingContent} />}
 

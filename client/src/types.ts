@@ -61,8 +61,14 @@ export interface WebSocketHook {
   stopStreaming: () => void;
 }
 
+export interface PipelineStage {
+  name: string;
+  label: string;
+}
+
 export interface WsMessage {
   type: string;
-  data?: string | Source[];
+  data?: string | Source[] | PipelineStage;
   sessionId?: string;
+  mode?: string;
 }
