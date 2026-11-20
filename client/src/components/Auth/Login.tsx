@@ -23,7 +23,7 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/app');
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||

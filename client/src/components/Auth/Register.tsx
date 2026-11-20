@@ -37,7 +37,7 @@ const Register = () => {
     setLoading(true);
     try {
       await register(name, email, password);
-      navigate('/');
+      navigate('/app');
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||

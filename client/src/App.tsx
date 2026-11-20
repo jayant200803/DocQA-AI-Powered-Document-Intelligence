@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Landing from './components/Landing';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Header from './components/Layout/Header';
@@ -101,10 +102,11 @@ const App = () => {
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/"
+            path="/app"
             element={
               <ProtectedRoute>
                 <Dashboard />
