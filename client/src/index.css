@@ -115,6 +115,13 @@
     100% { transform: translate(7%, 6%) scale(1.18); }
   }
 
+  /* Chrome-arcs slow rotation */
+  .animate-chrome { animation: chromeSpin 48s linear infinite; }
+  @keyframes chromeSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
   /* ── Chip — prompt starters and follow-up suggestions ── */
   .chip {
     @apply inline-flex items-center px-3 py-1.5 text-xs font-medium transition-colors duration-150;
