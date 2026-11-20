@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Sparkles, LogOut, Menu, ChevronDown, Mic } from 'lucide-react';
+import { LogOut, Menu, ChevronDown, Mic } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { Wordmark } from '@/components/ui/wordmark';
 
 const VOICES = ['Kore', 'Aoede', 'Puck', 'Charon', 'Fenrir'];
 
@@ -27,13 +28,7 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="hidden lg:flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md flex items-center justify-center card">
-            <Sparkles className="w-3 h-3 text-accent" />
-          </div>
-          <span className="text-ink font-semibold text-sm tracking-tight">DocQA</span>
-          <span className="text-faint font-mono text-[10px]">AI</span>
-        </div>
+        <Wordmark size="sm" className="hidden lg:inline-flex" />
       </div>
 
       {/* Right controls */}
@@ -56,7 +51,7 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
                   key={v}
                   onClick={() => handleVoice(v)}
                   className={`w-full text-left px-3 py-2 text-xs transition-colors flex items-center gap-2 ${
-                    v === voice ? 'text-accent bg-[rgba(99,102,241,0.12)]' : 'text-muted hover:text-ink'
+                    v === voice ? 'text-accent bg-[rgba(240,106,60,0.12)]' : 'text-muted hover:text-ink'
                   }`}
                 >
                   <Mic className="w-3 h-3 opacity-50 shrink-0" />

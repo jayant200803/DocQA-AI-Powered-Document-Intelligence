@@ -7,6 +7,7 @@ import { AuroraBackground } from '@/components/ui/aurora-background';
 import { GlassCard } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Wordmark } from '@/components/ui/wordmark';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -44,15 +45,9 @@ const Login = () => {
         >
           {/* ── Left: pitch ─────────────────────────────── */}
           <div className="hidden select-none flex-col gap-7 lg:flex">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-gradient shadow-btn-glow">
-                <Sparkles className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-xl font-semibold tracking-tight text-ink">DocQA</span>
-              <span className="font-mono text-xs text-faint">AI</span>
-            </div>
+            <Wordmark size="lg" />
 
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-[rgba(21,23,25,0.6)] px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur-md">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-[rgba(30,25,21,0.6)] px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur-md">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
               Powered by Gemini 2.5 Flash
             </div>
@@ -109,11 +104,8 @@ const Login = () => {
 
           {/* ── Right: auth card ────────────────────────── */}
           <GlassCard className="w-full p-8">
-            <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-gradient shadow-btn-glow">
-                <Sparkles className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-lg font-semibold tracking-tight text-ink">DocQA</span>
+            <div className="mb-8 flex justify-center lg:hidden">
+              <Wordmark size="md" />
             </div>
 
             <div className="mb-8">

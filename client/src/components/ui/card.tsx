@@ -7,7 +7,7 @@ const GlassCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
     <div
       ref={ref}
       className={cn(
-        'rounded-xl border border-line bg-[rgba(14,15,17,0.55)] bg-glass backdrop-blur-xl shadow-premium',
+        'rounded-xl border border-line bg-[rgba(22,18,15,0.55)] bg-glass backdrop-blur-xl shadow-premium',
         className
       )}
       {...props}

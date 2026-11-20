@@ -79,7 +79,7 @@ const VoiceButton = ({ text }: VoiceButtonProps) => {
         className={`chip gap-1.5 disabled:opacity-40 ${
           hasError
             ? 'text-red-400 border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.08)]'
-            : playing ? 'text-accent border-accent bg-[rgba(99,102,241,0.14)]' : ''
+            : playing ? 'text-accent border-accent bg-[rgba(240,106,60,0.14)]' : ''
         }`}
       >
         {loading ? (

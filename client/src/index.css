@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 /* Design tokens — one source of truth for the whole app.
-   Linear/Vercel dark: near-black surfaces, thin borders, a single restrained accent. */
+   "Ember on ink": warm near-black surfaces, a single molten-amber accent.
+   Surfaces and accent are RGB channels so Tailwind alpha (bg-accent/10) works. */
 :root {
-  --bg: #08090a;          /* app background */
-  --surface-1: #0e0f11;   /* panels, cards, sidebar */
-  --surface-2: #151719;   /* inputs, raised rows */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --text: #ededee;
-  --text-muted: #9a9aa1;
-  --text-faint: #6b6b73;
-  --accent: #6366f1;
-  --accent-hover: #7b7ef5;
+  --bg: #0b0a09;             /* warm ink */
+  --surface-1-rgb: 22 18 15; /* warm charcoal — panels, cards, sidebar */
+  --surface-2-rgb: 30 25 21; /* inputs, raised rows */
+  --surface-1: rgb(var(--surface-1-rgb));
+  --surface-2: rgb(var(--surface-2-rgb));
+  --border: rgba(255, 246, 237, 0.09);
+  --border-strong: rgba(255, 246, 237, 0.16);
+  --text: #f1ede7;           /* warm bone */
+  --text-muted: #a79e92;
+  --text-faint: #6f685f;
+  --accent-rgb: 240 106 60;  /* ember */
+  --accent: rgb(var(--accent-rgb));
+  --accent-hover: #f8895c;
   --radius: 8px;
 }
 
@@ -81,7 +85,7 @@
   .input-field::placeholder { color: var(--text-faint); }
   .input-field:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / 0.14);
   }
 
   /* ── Chip — prompt starters and follow-up suggestions ── */
@@ -103,7 +107,7 @@
   }
   .chat-input-wrap:focus-within {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / 0.12);
   }
 
   /* ── Streaming cursor ────────────────────────────── */
@@ -124,7 +128,7 @@
   /* ── Auth side panel — quiet radial, not a loud gradient ── */
   .bg-auth {
     background:
-      radial-gradient(120% 90% at 20% 0%, rgba(99, 102, 241, 0.14) 0%, transparent 55%),
+      radial-gradient(120% 90% at 20% 0%, rgb(var(--accent-rgb) / 0.14) 0%, transparent 55%),
       var(--bg);
   }
 
@@ -143,8 +147,8 @@
   /* Voice pulse ring */
   .voice-playing { animation: voicePulse 1.5s ease-in-out infinite; }
   @keyframes voicePulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
-    50%      { box-shadow: 0 0 0 7px rgba(99, 102, 241, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0.5); }
+    50%      { box-shadow: 0 0 0 7px rgb(var(--accent-rgb) / 0); }
   }
 
   /* Shimmer skeleton */

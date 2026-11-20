@@ -1,6 +1,7 @@
 import { useState, useEffect, ReactElement } from 'react';
-import { Plus, MessageSquare, Trash2, X, CheckCircle2, Loader2, AlertCircle, Sparkles, FileText, Upload } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, X, CheckCircle2, Loader2, AlertCircle, FileText, Upload } from 'lucide-react';
 import { chatAPI } from '../../services/api';
+import { Wordmark } from '@/components/ui/wordmark';
 import { Document, ChatSession } from '../../types';
 import UploadZone from '../Documents/UploadZone';
 
@@ -72,12 +73,7 @@ const Sidebar = ({
       >
         {/* Mobile brand header */}
         <div className="lg:hidden flex items-center justify-between px-4 py-4 shrink-0 border-b border-line">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center card">
-              <Sparkles className="w-3.5 h-3.5 text-accent" />
-            </div>
-            <span className="text-ink font-semibold text-sm tracking-tight">DocQA</span>
-          </div>
+          <Wordmark size="sm" />
           <button onClick={onClose} className="btn-ghost p-1.5">
             <X className="w-4 h-4" />
           </button>
@@ -105,7 +101,7 @@ const Sidebar = ({
               title="Upload document"
               className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border transition-colors duration-150 ${
                 showUpload
-                  ? 'text-accent border-accent bg-[rgba(99,102,241,0.12)]'
+                  ? 'text-accent border-accent bg-[rgba(240,106,60,0.12)]'
                   : 'text-muted border-line bg-surface-2 hover:border-line-strong'
               }`}
             >
@@ -132,7 +128,7 @@ const Sidebar = ({
                     <div
                       key={doc._id}
                       className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer select-none group border transition-colors duration-150 ${
-                        sel ? 'bg-[rgba(99,102,241,0.1)] border-accent' : 'border-transparent hover:bg-white/5'
+                        sel ? 'bg-[rgba(240,106,60,0.1)] border-accent' : 'border-transparent hover:bg-white/5'
                       }`}
                       onClick={() => onToggleDoc(doc._id)}
                     >
@@ -210,7 +206,7 @@ const Sidebar = ({
         {/* Active docs indicator */}
         {selectedDocIds.length > 0 && (
           <div className="px-3 py-3 shrink-0 border-t border-line">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-accent bg-[rgba(99,102,241,0.1)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-accent bg-[rgba(240,106,60,0.1)]">
               <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
               <span className="text-xs text-ink font-medium">
                 {selectedDocIds.length} doc{selectedDocIds.length !== 1 ? 's' : ''} active
