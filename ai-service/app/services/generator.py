@@ -39,8 +39,7 @@ def _make_body(prompt: str, settings) -> dict:
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": settings.llm_temperature,
-            "maxOutputTokens": settings.llm_max_tokens,
-            "thinkingConfig": {"thinkingBudget": 0},  # disable thinking for speed
+            "maxOutputTokens": settings.llm_max_tokens,  # disable thinking for speed
         },
     }
 

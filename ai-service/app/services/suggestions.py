@@ -11,7 +11,6 @@ def _call_gemini(prompt: str, max_tokens: int = 256) -> str:
         "generationConfig": {
             "temperature": 0.7,
             "maxOutputTokens": max_tokens,
-            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
     response = httpx.post(

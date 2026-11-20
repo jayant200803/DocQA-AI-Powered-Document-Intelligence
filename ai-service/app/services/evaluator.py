@@ -26,7 +26,6 @@ def is_context_sufficient(question: str, chunks: list[dict]) -> bool:
         "generationConfig": {
             "temperature": 0.0,
             "maxOutputTokens": 4,
-            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
     try:

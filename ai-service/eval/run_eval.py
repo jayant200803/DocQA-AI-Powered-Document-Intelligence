@@ -56,7 +56,7 @@ def judge_faithful(answer: str, chunks: list[dict]) -> bool:
     )
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 4, "thinkingConfig": {"thinkingBudget": 0}},
+        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 4},
     }
     for attempt in range(3):
         response = httpx.post(

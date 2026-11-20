@@ -25,7 +25,7 @@ def rerank(question: str, chunks: list[dict], top_k: int = 5) -> list[dict]:
     )
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 64, "thinkingConfig": {"thinkingBudget": 0}},
+        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 64},
     }
     try:
         response = httpx.post(

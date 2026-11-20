@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # Model config
     embedding_model: str = "gemini-embedding-001"
     embedding_dimensions: int = 768
-    llm_model: str = "gemini-2.5-flash"
+    llm_model: str = "gemini-flash-lite-latest"
     llm_temperature: float = 0.1
     llm_max_tokens: int = 1024
 
