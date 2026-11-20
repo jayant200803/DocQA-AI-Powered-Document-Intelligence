@@ -101,7 +101,7 @@ const Sidebar = ({
               title="Upload document"
               className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border transition-colors duration-150 ${
                 showUpload
-                  ? 'text-accent border-accent bg-[rgba(240,106,60,0.12)]'
+                  ? 'text-accent border-accent bg-[rgba(59,130,246,0.12)]'
                   : 'text-muted border-line bg-surface-2 hover:border-line-strong'
               }`}
             >
@@ -128,7 +128,7 @@ const Sidebar = ({
                     <div
                       key={doc._id}
                       className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer select-none group border transition-colors duration-150 ${
-                        sel ? 'bg-[rgba(240,106,60,0.1)] border-accent' : 'border-transparent hover:bg-white/5'
+                        sel ? 'bg-[rgba(59,130,246,0.1)] border-accent' : 'border-transparent hover:bg-white/5'
                       }`}
                       onClick={() => onToggleDoc(doc._id)}
                     >
@@ -206,7 +206,7 @@ const Sidebar = ({
         {/* Active docs indicator */}
         {selectedDocIds.length > 0 && (
           <div className="px-3 py-3 shrink-0 border-t border-line">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-accent bg-[rgba(240,106,60,0.1)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-accent bg-[rgba(59,130,246,0.1)]">
               <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
               <span className="text-xs text-ink font-medium">
                 {selectedDocIds.length} doc{selectedDocIds.length !== 1 ? 's' : ''} active

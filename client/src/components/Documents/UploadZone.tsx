@@ -78,7 +78,7 @@ const UploadZone = ({ onUploadComplete, compact = false }: UploadZoneProps) => {
           {...getRootProps()}
           className={`border border-dashed rounded-lg p-3 text-center cursor-pointer transition-colors duration-150 ${
             uploading ? 'opacity-50 cursor-not-allowed' : ''
-          } ${isDragActive ? 'border-accent bg-[rgba(240,106,60,0.08)]' : 'border-line-strong'}`}
+          } ${isDragActive ? 'border-accent bg-[rgba(59,130,246,0.08)]' : 'border-line-strong'}`}
         >
           <input {...getInputProps()} />
           {uploading ? (
@@ -110,7 +110,7 @@ const UploadZone = ({ onUploadComplete, compact = false }: UploadZoneProps) => {
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors duration-150 ${
           uploading ? 'opacity-50 cursor-not-allowed' : ''
-        } ${isDragActive ? 'border-accent bg-[rgba(240,106,60,0.06)]' : 'border-line-strong'}`}
+        } ${isDragActive ? 'border-accent bg-[rgba(59,130,246,0.06)]' : 'border-line-strong'}`}
       >
         <input {...getInputProps()} />
         {uploading ? (

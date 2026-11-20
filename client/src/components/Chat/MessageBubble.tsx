@@ -15,7 +15,7 @@ const SourceCard = ({ source, index }: SourceCardProps) => {
     <button
       onClick={() => setExpanded(!expanded)}
       className={`text-left w-full rounded-lg p-2.5 border transition-colors duration-150 ${
-        expanded ? 'border-accent bg-[rgba(240,106,60,0.06)]' : 'border-line bg-surface-2 hover:border-line-strong'
+        expanded ? 'border-accent bg-[rgba(59,130,246,0.06)]' : 'border-line bg-surface-2 hover:border-line-strong'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
@@ -27,7 +27,7 @@ const SourceCard = ({ source, index }: SourceCardProps) => {
           <span className="text-xs font-medium text-ink truncate">{source.fileName}</span>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] text-accent font-mono px-1.5 py-0.5 rounded bg-[rgba(240,106,60,0.1)]">
+          <span className="text-[10px] text-accent font-mono px-1.5 py-0.5 rounded bg-[rgba(59,130,246,0.1)]">
             {(source.relevanceScore * 100).toFixed(0)}%
           </span>
           {expanded

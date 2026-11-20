@@ -61,7 +61,7 @@ const Register = () => {
           <div className="hidden select-none flex-col gap-7 lg:flex">
             <Wordmark size="lg" />
 
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-[rgba(30,25,21,0.6)] px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur-md">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-[rgba(20,23,30,0.6)] px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur-md">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
               Free to get started
             </div>

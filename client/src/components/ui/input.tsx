@@ -6,9 +6,9 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
     <input
       ref={ref}
       className={cn(
-        'flex h-11 w-full rounded-lg border border-line bg-[rgba(30,25,21,0.7)] px-3.5 text-sm text-ink',
+        'flex h-11 w-full rounded-lg border border-line bg-[rgba(20,23,30,0.7)] px-3.5 text-sm text-ink',
         'placeholder:text-faint outline-none transition-all duration-200',
-        'focus:border-accent focus:ring-2 focus:ring-[rgba(240,106,60,0.15)]',
+        'focus:border-accent focus:ring-2 focus:ring-[rgba(59,130,246,0.15)]',
         'disabled:opacity-40 disabled:cursor-not-allowed',
         className
       )}

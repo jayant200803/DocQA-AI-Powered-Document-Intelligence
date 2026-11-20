@@ -3,22 +3,22 @@
 @tailwind utilities;
 
 /* Design tokens — one source of truth for the whole app.
-   "Ember on ink": warm near-black surfaces, a single molten-amber accent.
+   "Blue glow": cool near-black surfaces, a single electric-blue accent.
    Surfaces and accent are RGB channels so Tailwind alpha (bg-accent/10) works. */
 :root {
-  --bg: #0b0a09;             /* warm ink */
-  --surface-1-rgb: 22 18 15; /* warm charcoal — panels, cards, sidebar */
-  --surface-2-rgb: 30 25 21; /* inputs, raised rows */
+  --bg: #08090c;             /* cool ink */
+  --surface-1-rgb: 14 16 21; /* cool charcoal — panels, cards, sidebar */
+  --surface-2-rgb: 20 23 30; /* inputs, raised rows */
   --surface-1: rgb(var(--surface-1-rgb));
   --surface-2: rgb(var(--surface-2-rgb));
-  --border: rgba(255, 246, 237, 0.09);
-  --border-strong: rgba(255, 246, 237, 0.16);
-  --text: #f1ede7;           /* warm bone */
-  --text-muted: #a79e92;
-  --text-faint: #6f685f;
-  --accent-rgb: 240 106 60;  /* ember */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --text: #eef1f6;           /* cool bone */
+  --text-muted: #99a1b0;
+  --text-faint: #636a78;
+  --accent-rgb: 59 130 246;  /* electric blue */
   --accent: rgb(var(--accent-rgb));
-  --accent-hover: #f8895c;
+  --accent-hover: #60a5fa;
   --radius: 8px;
 }
 

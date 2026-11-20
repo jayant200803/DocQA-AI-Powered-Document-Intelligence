@@ -51,7 +51,7 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
                   key={v}
                   onClick={() => handleVoice(v)}
                   className={`w-full text-left px-3 py-2 text-xs transition-colors flex items-center gap-2 ${
-                    v === voice ? 'text-accent bg-[rgba(240,106,60,0.12)]' : 'text-muted hover:text-ink'
+                    v === voice ? 'text-accent bg-[rgba(59,130,246,0.12)]' : 'text-muted hover:text-ink'
                   }`}
                 >
                   <Mic className="w-3 h-3 opacity-50 shrink-0" />

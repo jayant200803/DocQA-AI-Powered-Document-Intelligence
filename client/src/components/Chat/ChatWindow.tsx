@@ -211,14 +211,14 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
             <div className="flex flex-col items-center justify-center h-full min-h-[320px] text-center">
               <GlassFolder
                 tone="dark"
-                art="aurora"
+                art="glacier"
                 width={288}
                 label="Your documents"
                 meta="ask anything"
                 action="none"
                 files={[
-                  { name: 'Report.pdf', meta: 'PDF', art: 'aurora' },
-                  { name: 'Notes.md', meta: 'TXT', art: 'dusk' },
+                  { name: 'Report.pdf', meta: 'PDF', art: 'glacier' },
+                  { name: 'Notes.md', meta: 'TXT', art: 'aurora' },
                   { name: 'Contract.pdf', meta: 'PDF' },
                 ]}
               />
