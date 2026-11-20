@@ -115,8 +115,9 @@
     100% { transform: translate(7%, 6%) scale(1.18); }
   }
 
-  /* Chrome-arcs slow rotation */
+  /* Rotating backdrops (chrome arcs, accretion disk) */
   .animate-chrome { animation: chromeSpin 48s linear infinite; }
+  .animate-accretion { animation: chromeSpin 30s linear infinite; }
   @keyframes chromeSpin {
     from { transform: translate(-50%, -50%) rotate(0deg); }
     to   { transform: translate(-50%, -50%) rotate(360deg); }

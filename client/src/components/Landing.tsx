@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Brain, ShieldCheck, Zap, FileText, ArrowRight } from 'lucide-react';
 import { WaveMesh } from '@/components/ui/wave-mesh';
+import { EtchedAccretion } from '@/components/ui/etched-accretion';
 import { MotionBlurText } from '@/components/ui/motion-blur-text';
 import { GlassCard } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -133,16 +134,19 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Footer CTA ───────────────────────────────────── */}
-      <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-        <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Start asking your documents</h2>
-        <p className="mt-3 text-muted">Free to try. No setup. Your data stays private.</p>
-        <div className="mt-8">
-          <Link to="/register"><Button size="lg" variant="smoky">Get started free <ArrowRight className="h-4 w-4" /></Button></Link>
-        </div>
-        <div className="mt-16 flex items-center justify-center gap-2 border-t border-line pt-8">
-          <Wordmark size="sm" />
-          <span className="ml-2 text-xs text-faint">· Gemini · Pinecone · FastAPI · React</span>
+      {/* ── Footer CTA (accretion backdrop) ──────────────── */}
+      <section className="relative overflow-hidden">
+        <EtchedAccretion />
+        <div className="relative z-10 mx-auto max-w-3xl px-6 py-28 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Start asking your documents</h2>
+          <p className="mt-3 text-muted">Free to try. No setup. Your data stays private.</p>
+          <div className="mt-8">
+            <Link to="/register"><Button size="lg" variant="smoky">Get started free <ArrowRight className="h-4 w-4" /></Button></Link>
+          </div>
+          <div className="mt-16 flex items-center justify-center gap-2 border-t border-line pt-8">
+            <Wordmark size="sm" />
+            <span className="ml-2 text-xs text-faint">· Gemini · Pinecone · FastAPI · React</span>
+          </div>
         </div>
       </section>
     </div>
