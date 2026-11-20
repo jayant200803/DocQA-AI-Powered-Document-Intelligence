@@ -76,14 +76,11 @@ const VoiceButton = ({ text }: VoiceButtonProps) => {
         onClick={handlePlay}
         disabled={loading}
         title={playing ? 'Stop' : 'Listen with AI voice'}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 disabled:opacity-40"
-        style={
+        className={`chip gap-1.5 disabled:opacity-40 ${
           hasError
-            ? { background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }
-            : playing
-            ? { background: 'rgba(99,102,241,0.2)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.35)' }
-            : { background: 'rgba(255,255,255,0.04)', color: '#64748b', border: '1px solid rgba(255,255,255,0.07)' }
-        }
+            ? 'text-red-400 border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.08)]'
+            : playing ? 'text-accent border-accent bg-[rgba(59,130,246,0.14)]' : ''
+        }`}
       >
         {loading ? (
           <Loader2 className="w-3 h-3 animate-spin" />
@@ -99,16 +96,7 @@ const VoiceButton = ({ text }: VoiceButtonProps) => {
         <button
           onClick={handleDownload}
           title="Download WAV"
-          className="p-1.5 rounded-full transition-all duration-200"
-          style={{ color: '#64748b' }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#818cf8';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(99,102,241,0.08)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#64748b';
-            (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-          }}
+          className="p-1.5 rounded-full text-faint hover:text-accent hover:bg-white/5 transition-colors duration-150"
         >
           <Download className="w-3 h-3" />
         </button>

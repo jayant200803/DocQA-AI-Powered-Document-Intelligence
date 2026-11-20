@@ -7,38 +7,28 @@ interface StreamingMessageProps {
 const StreamingMessage = ({ content }: StreamingMessageProps) => {
   return (
     <div className="flex gap-3 justify-start msg-enter">
-      {/* Glowing bot avatar */}
-      <div
-        className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 animate-glowPulse"
-        style={{ background: '#6366f1', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}
-      >
-        <Bot className="w-4 h-4 text-white" />
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 card">
+        <Bot className="w-4 h-4 text-accent" />
       </div>
 
       <div className="max-w-[75%]">
         {content ? (
-          <div
-            className="px-4 py-3 rounded-2xl rounded-bl-md text-slate-200 text-sm leading-relaxed whitespace-pre-wrap"
-            style={{ background: '#18181d', border: '1px solid rgba(255,255,255,0.07)' }}
-          >
+          <div className="px-4 py-3 rounded-lg rounded-bl-sm bg-surface border border-line text-ink text-sm leading-relaxed whitespace-pre-wrap">
             {content}
             <span className="streaming-cursor" />
           </div>
         ) : (
-          <div
-            className="flex items-center gap-1.5 px-4 py-3.5 rounded-2xl rounded-bl-md w-16"
-            style={{ background: '#18181d', border: '1px solid rgba(255,255,255,0.07)' }}
-          >
-            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-brand-500" />
-            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-brand-500" />
-            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-brand-500" />
+          <div className="flex items-center gap-1.5 px-4 py-3.5 rounded-lg rounded-bl-sm w-16 bg-surface border border-line">
+            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-accent" />
+            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-accent" />
+            <span className="typing-dot w-1.5 h-1.5 rounded-full bg-accent" />
           </div>
         )}
 
         {/* Status indicator */}
         <div className="flex items-center gap-1.5 mt-1.5 px-1">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] text-slate-600 font-medium">AI is responding</span>
+          <span className="text-[10px] text-faint font-medium">AI is responding</span>
         </div>
       </div>
     </div>

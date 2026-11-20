@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # Model config
     embedding_model: str = "gemini-embedding-001"
     embedding_dimensions: int = 768
-    llm_model: str = "gemini-2.5-flash"
+    llm_model: str = "gemini-flash-lite-latest"
     llm_temperature: float = 0.1
     llm_max_tokens: int = 1024
 
@@ -21,9 +21,14 @@ class Settings(BaseSettings):
 
     # Retrieval config
     top_k: int = 5
+    # CAG: if the selected documents total at most this many chunks, skip
+    # retrieval and load them whole (context-augmented generation).
+    cag_max_chunks: int = 12
 
     # Node.js server callback URL (AI service → Node.js after ingestion)
     server_callback_url: str = "http://localhost:5000"
+    # Shared secret for the progress/status callbacks to the Node server.
+    internal_api_secret: str = ""
 
     class Config:
         env_file = ".env"

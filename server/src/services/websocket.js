@@ -104,9 +104,13 @@ async function handleMessage(ws, message) {
           const event = JSON.parse(jsonStr);
 
           switch (event.type) {
+            case 'stage':
+              ws.send(JSON.stringify({ type: 'stage', data: event.data }));
+              break;
+
             case 'sources':
               sources = event.data;
-              ws.send(JSON.stringify({ type: 'sources', data: sources, sessionId: currentSessionId }));
+              ws.send(JSON.stringify({ type: 'sources', data: sources, mode: event.mode, sessionId: currentSessionId }));
               break;
 
             case 'token':

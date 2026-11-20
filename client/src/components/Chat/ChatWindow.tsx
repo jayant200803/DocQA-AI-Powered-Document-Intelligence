@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles } from 'lucide-react';
+import GlassFolder from '@/components/ui/glass-folder-cards';
 import MessageBubble from './MessageBubble';
 import StreamingMessage from './StreamingMessage';
 import ChatInput from './ChatInput';
+import PipelineTrace from './PipelineTrace';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import { chatAPI } from '../../services/api';
-import { Message, Source, WsMessage } from '../../types';
+import { Message, Source, WsMessage, PipelineStage } from '../../types';
 
 const AI_URL = import.meta.env.VITE_AI_URL || 'http://localhost:8000';
 
@@ -27,6 +28,10 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingContent, setStreamingContent] = useState('');
   const [streamingSources, setStreamingSources] = useState<Source[]>([]);
+  const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>([]);
+  const [pipelineMode, setPipelineMode] = useState('');
+  const pipelineRef = useRef<PipelineStage[]>([]);
+  const pipelineModeRef = useRef('');
   const [currentSessionId, setCurrentSessionId] = useState(sessionId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastQuestionRef = useRef('');
@@ -69,12 +74,19 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
   };
 
   useEffect(() => {
+    ws.on('stage', (msg: WsMessage) => {
+      const stage = msg.data as PipelineStage;
+      pipelineRef.current = [...pipelineRef.current, stage];
+      setPipelineStages((prev) => [...prev, stage]);
+    });
+
     ws.on('token', (msg: WsMessage) => {
       setStreamingContent((prev) => prev + (msg.data as string));
     });
 
     ws.on('sources', (msg: WsMessage) => {
       setStreamingSources((msg.data as Source[]) || []);
+      if (msg.mode) { setPipelineMode(msg.mode); pipelineModeRef.current = msg.mode; }
       if (msg.sessionId) {
         setCurrentSessionId(msg.sessionId);
         onSessionChange(msg.sessionId);
@@ -92,6 +104,8 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
               content: answer,
               sources: streamingSources,
               timestamp: new Date().toISOString(),
+              pipeline: pipelineRef.current.length ? [...pipelineRef.current] : undefined,
+              mode: pipelineModeRef.current || undefined,
             };
             const updated = [...prev, newMsg];
             const newMsgIdx = updated.length - 1;
@@ -111,12 +125,20 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
         return '';
       });
       setStreamingSources([]);
+      setPipelineStages([]);
+      setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
       ws.stopStreaming();
     });
 
     ws.on('error', (msg: WsMessage) => {
       setStreamingContent('');
       setStreamingSources([]);
+      setPipelineStages([]);
+      setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
       ws.stopStreaming();
       setMessages((prev) => [
         ...prev,
@@ -130,6 +152,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
     });
 
     return () => {
+      ws.off('stage');
       ws.off('token');
       ws.off('sources');
       ws.off('done');
@@ -161,6 +184,10 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
       lastQuestionRef.current = question;
       suggestionsFetchedRef.current = false;
+      setPipelineStages([]);
+      setPipelineMode('');
+      pipelineRef.current = [];
+      pipelineModeRef.current = '';
 
       const sid = currentSessionId || genId();
       if (!currentSessionId) {
@@ -204,19 +231,26 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      {/* Message area — full dark */}
-      <div className="flex-1 overflow-y-auto px-4 py-6" style={{ background: '#0c0c0f' }}>
+      {/* Message area */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 bg-chat">
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && !streamingContent && (
             <div className="flex flex-col items-center justify-center h-full min-h-[320px] text-center">
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
-                style={{ background: '#6366f1', boxShadow: '0 0 32px rgba(99,102,241,0.3)' }}
-              >
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-xl font-bold gradient-text mb-2">Ask your documents</h2>
-              <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
+              <GlassFolder
+                tone="dark"
+                art="glacier"
+                width={288}
+                label="Your documents"
+                meta="ask anything"
+                action="none"
+                files={[
+                  { name: 'Report.pdf', meta: 'PDF', art: 'glacier' },
+                  { name: 'Notes.md', meta: 'TXT', art: 'aurora' },
+                  { name: 'Contract.pdf', meta: 'PDF' },
+                ]}
+              />
+              <h2 className="mt-2 text-xl font-semibold text-ink mb-2">Ask your documents</h2>
+              <p className="text-sm text-muted max-w-sm leading-relaxed">
                 {noDocsSelected
                   ? 'Select documents from the sidebar, then ask questions about them.'
                   : 'Type a question below to get AI-powered answers with source citations.'}
@@ -224,24 +258,7 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
               {!noDocsSelected && (
                 <div className="mt-6 flex gap-2 flex-wrap justify-center">
                   {['What is this document about?', 'Summarize the key points', 'What are the main conclusions?'].map((q) => (
-                    <button
-                      key={q}
-                      onClick={() => handleSend(q)}
-                      className="px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150"
-                      style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        color: '#94a3b8',
-                      }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(99,102,241,0.35)';
-                        (e.currentTarget as HTMLButtonElement).style.color = '#a5b4fc';
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                        (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8';
-                      }}
-                    >
+                    <button key={q} onClick={() => handleSend(q)} className="chip">
                       {q}
                     </button>
                   ))}
@@ -258,6 +275,12 @@ const ChatWindow = ({ selectedDocIds, sessionId, onSessionChange }: ChatWindowPr
               onSuggestionClick={handleSuggestionClick}
             />
           ))}
+
+          {ws.isStreaming && pipelineStages.length > 0 && (
+            <div className="flex justify-start">
+              <PipelineTrace stages={pipelineStages} mode={pipelineMode} done={!!streamingContent} />
+            </div>
+          )}
 
           {streamingContent && <StreamingMessage content={streamingContent} />}
 

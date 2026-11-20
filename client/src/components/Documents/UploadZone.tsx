@@ -54,105 +54,91 @@ const UploadZone = ({ onUploadComplete, compact = false }: UploadZoneProps) => {
     disabled: uploading,
   });
 
+  // Success/error toast — shared by both variants.
+  const statusToast = uploadStatus && (
+    <div
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium animate-fadeUp border ${
+        uploadStatus.type === 'success'
+          ? 'text-emerald-400 bg-[rgba(52,211,153,0.07)] border-[rgba(52,211,153,0.15)]'
+          : 'text-red-400 bg-[rgba(239,68,68,0.07)] border-[rgba(239,68,68,0.15)]'
+      }`}
+    >
+      {uploadStatus.type === 'success'
+        ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+        : <XCircle className="w-3.5 h-3.5 shrink-0" />
+      }
+      <span className="truncate">{uploadStatus.message}</span>
+    </div>
+  );
+
   if (compact) {
     return (
       <div className="p-2">
         <div
           {...getRootProps()}
-          className={`relative border border-dashed rounded-xl p-3 text-center cursor-pointer transition-all duration-200
-            ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          style={isDragActive
-            ? { borderColor: 'rgba(99,102,241,0.6)', background: 'rgba(99,102,241,0.08)' }
-            : { borderColor: 'rgba(255,255,255,0.1)', background: 'transparent' }
-          }
+          className={`border border-dashed rounded-lg p-3 text-center cursor-pointer transition-colors duration-150 ${
+            uploading ? 'opacity-50 cursor-not-allowed' : ''
+          } ${isDragActive ? 'border-accent bg-[rgba(59,130,246,0.08)]' : 'border-line-strong'}`}
         >
           <input {...getInputProps()} />
-
           {uploading ? (
             <div className="flex items-center justify-center gap-2">
-              <Loader2 className="w-3.5 h-3.5 text-brand-400 animate-spin" />
-              <span className="text-xs text-slate-500">Uploading…</span>
+              <Loader2 className="w-3.5 h-3.5 text-accent animate-spin" />
+              <span className="text-xs text-muted">Uploading…</span>
             </div>
           ) : isDragActive ? (
             <div className="flex items-center justify-center gap-2">
-              <Upload className="w-3.5 h-3.5 text-brand-400" />
-              <span className="text-xs text-brand-300 font-medium">Drop to upload</span>
+              <Upload className="w-3.5 h-3.5 text-accent" />
+              <span className="text-xs text-accent font-medium">Drop to upload</span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <Upload className="w-3.5 h-3.5 text-slate-600" />
-              <span className="text-xs text-slate-600">Drop PDF or TXT · max 10 MB</span>
+              <Upload className="w-3.5 h-3.5 text-faint" />
+              <span className="text-xs text-faint">Drop PDF or TXT · max 10 MB</span>
             </div>
           )}
         </div>
-
-        {uploadStatus && (
-          <div
-            className={`mt-1.5 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium animate-fadeUp
-              ${uploadStatus.type === 'success'
-                ? 'text-emerald-400'
-                : 'text-red-400'
-              }`}
-            style={uploadStatus.type === 'success'
-              ? { background: 'rgba(52,211,153,0.07)', border: '1px solid rgba(52,211,153,0.15)' }
-              : { background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.15)' }
-            }
-          >
-            {uploadStatus.type === 'success'
-              ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-              : <XCircle className="w-3.5 h-3.5 shrink-0" />
-            }
-            <span className="truncate">{uploadStatus.message}</span>
-          </div>
-        )}
+        {uploadStatus && <div className="mt-1.5">{statusToast}</div>}
       </div>
     );
   }
 
-  // Full-size variant (kept for backwards compatibility)
+  // Full-size variant
   return (
     <div className="p-4">
       <div
         {...getRootProps()}
-        className={`relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 overflow-hidden
-          ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-        style={isDragActive
-          ? { borderColor: 'rgba(99,102,241,0.6)', background: 'rgba(99,102,241,0.06)' }
-          : { borderColor: 'rgba(255,255,255,0.1)', background: 'transparent' }
-        }
+        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors duration-150 ${
+          uploading ? 'opacity-50 cursor-not-allowed' : ''
+        } ${isDragActive ? 'border-accent bg-[rgba(59,130,246,0.06)]' : 'border-line-strong'}`}
       >
         <input {...getInputProps()} />
-
         {uploading ? (
           <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: 'rgba(99,102,241,0.1)' }}>
-              <Loader2 className="w-6 h-6 text-brand-400 animate-spin" />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center card">
+              <Loader2 className="w-6 h-6 text-accent animate-spin" />
             </div>
-            <p className="text-sm text-slate-500 font-medium">Uploading…</p>
+            <p className="text-sm text-muted font-medium">Uploading…</p>
           </div>
         ) : isDragActive ? (
           <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: 'rgba(99,102,241,0.12)' }}>
-              <Upload className="w-6 h-6 text-brand-400" />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center card">
+              <Upload className="w-6 h-6 text-accent" />
             </div>
-            <p className="text-sm text-brand-300 font-semibold">Drop to upload</p>
+            <p className="text-sm text-accent font-semibold">Drop to upload</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.04)' }}>
-              <Upload className="w-6 h-6 text-slate-600" />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center card">
+              <Upload className="w-6 h-6 text-faint" />
             </div>
             <div>
-              <p className="text-sm text-slate-400 font-semibold">Drop PDF or TXT files here</p>
-              <p className="text-xs text-slate-600 mt-0.5">or click to browse · max 10 MB</p>
+              <p className="text-sm text-ink font-semibold">Drop PDF or TXT files here</p>
+              <p className="text-xs text-faint mt-0.5">or click to browse · max 10 MB</p>
             </div>
             <div className="flex gap-2 mt-1">
               {['PDF', 'TXT', 'MD'].map((ext) => (
-                <span key={ext} className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold text-slate-600"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <span key={ext} className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold text-faint bg-surface-2 border border-line">
                   .{ext.toLowerCase()}
                 </span>
               ))}
@@ -160,23 +146,7 @@ const UploadZone = ({ onUploadComplete, compact = false }: UploadZoneProps) => {
           </div>
         )}
       </div>
-
-      {uploadStatus && (
-        <div
-          className={`mt-3 flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium animate-fadeUp
-            ${uploadStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400'}`}
-          style={uploadStatus.type === 'success'
-            ? { background: 'rgba(52,211,153,0.07)', border: '1px solid rgba(52,211,153,0.15)' }
-            : { background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.15)' }
-          }
-        >
-          {uploadStatus.type === 'success'
-            ? <CheckCircle2 className="w-4 h-4 shrink-0" />
-            : <XCircle className="w-4 h-4 shrink-0" />
-          }
-          {uploadStatus.message}
-        </div>
-      )}
+      {uploadStatus && <div className="mt-3">{statusToast}</div>}
     </div>
   );
 };

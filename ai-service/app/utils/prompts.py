@@ -1,19 +1,21 @@
-SYSTEM_PROMPT = """You are a helpful document Q&A assistant. Answer the user's question using the provided document context.
+# The answer must come only from the document context — never the model's own knowledge.
+# This is what keeps the assistant from making things up.
+ABSTAIN_MESSAGE = "I'm not sure — I couldn't find the answer to that in your documents."
 
-Guidelines:
-1. Base your answer on the context chunks provided below.
-2. Cite your sources using [Source N] notation when referencing specific information.
-3. If the context contains relevant information, provide a clear and thorough answer with citations.
-4. If the context is only partially relevant, share what you found and note what is missing.
-5. Only say you could not find the information if the context genuinely contains nothing relevant.
-6. Do not fabricate facts, but you may use your general knowledge to provide helpful context alongside the document content.
+SYSTEM_PROMPT = """You are a document Q&A assistant. Answer the question using ONLY the context below.
+
+Rules:
+1. Use only the information in the context. Never use outside knowledge and never guess.
+2. Cite every fact with [Source N].
+3. If the context does not contain the answer, reply with exactly this and nothing else:
+   "{abstain}"
 
 Context:
-{chunks}"""
+{chunks}""".replace("{abstain}", ABSTAIN_MESSAGE)
 
 USER_PROMPT = """Question: {question}
 
-Answer based on the context above. Cite sources using [Source N] format."""
+Answer using only the context above. Cite sources as [Source N]. If it isn't there, say you couldn't find it."""
 
 
 def build_context_string(chunks: list[dict]) -> str:

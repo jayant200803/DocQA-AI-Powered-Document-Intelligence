@@ -48,8 +48,12 @@ It works like having a brilliant research assistant who has read every document 
 ## What Can It Do?
 
 - **Upload & Chat** — Drop in a PDF or text file and start asking questions immediately
+- **Grounded, No Hallucination** — Answers come only from your documents. If the answer isn't there, it says so instead of making one up
+- **Agentic Retrieval** — The question is rewritten, searched with vector + keyword (hybrid), then reranked so only the passages that truly answer it reach the model
+- **Context-Augmented (CAG) Mode** — Small documents skip retrieval entirely and are loaded whole, for sharper answers
+- **Measured Quality** — An evaluation harness scores retrieval hit-rate, faithfulness, and abstention accuracy on a golden question set
 - **Cited Answers** — Every response points back to the exact source chunk it used, so you can verify
-- **Streaming Responses** — Answers appear token by token, just like ChatGPT, so you never wait for a wall of text
+- **Streaming Responses** — Answers appear token by token, so you never wait for a wall of text
 - **AI Follow-up Suggestions** — After each answer, the AI suggests 3 smart follow-up questions based on what you just learned
 - **Copy & Regenerate** — Copy any answer to clipboard or regenerate it if you want a different take
 - **Text-to-Speech** — Listen to answers read aloud in 5 different Gemini AI voices
@@ -101,41 +105,64 @@ After storing, Gemini AI reads the first part of the document and writes a short
 
 ### Step 3: You Ask a Question
 
-You type a question in the chat. Here is exactly what happens in the next few hundred milliseconds:
+You type a question. Instead of a single blind lookup, the AI service runs an **agentic pipeline** that decides how to gather context, checks whether it's enough, and refuses rather than guess:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        QUERY PIPELINE                            │
+│                    AGENTIC QUERY PIPELINE                        │
 │                                                                   │
 │  ❓ "What are the payment terms in Section 4?"                    │
 │      │                                                            │
 │      ▼                                                            │
-│  EMBED QUESTION ── Turn your question into a vector              │
-│      │              (same embedding model used for chunks)       │
+│  ROUTE ─────────── Small document? → CAG: load the whole doc     │
+│      │             Larger? → RAG pipeline below                   │
+│      ▼                                                            │
+│  REWRITE ───────── Turn the question into a keyword-rich query    │
 │      │                                                            │
 │      ▼                                                            │
-│  VECTOR SEARCH ─── Search Pinecone for the top-K chunks         │
-│      │              whose vectors are closest to your question   │
-│      │              This is semantic search, not keyword search  │
-│      │                                                            │
+│  HYBRID SEARCH ─── Vector (Pinecone) + BM25 keyword, fused with   │
+│      │             reciprocal rank fusion — catches exact terms   │
 │      ▼                                                            │
-│  BUILD CONTEXT ─── Assemble the retrieved chunks into a         │
-│      │              structured prompt with [Source N] labels     │
-│      │                                                            │
+│  RERANK ────────── Gemini reorders and drops chunks that don't    │
+│      │             actually answer the question                   │
 │      ▼                                                            │
-│  ASK GEMINI ────── Send context + question to Gemini 2.5 Flash  │
-│      │              The LLM only sees your documents, not the    │
-│      │              whole internet — so answers stay grounded    │
-│      │                                                            │
+│  GRADE ─────────── "Is this context enough to answer?"            │
+│      │                ├─ No  → ABSTAIN: "not in your documents"   │
+│      │                └─ Yes → continue                           │
 │      ▼                                                            │
-│  STREAM TOKENS ─── Answer arrives word by word via SSE          │
-│                     Sources are shown as clickable references    │
+│  GENERATE ──────── Answer strictly from context, cite [Source N], │
+│                    stream token by token via SSE                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+Two independent safeguards keep answers honest: the **grader** refuses up front when the context is weak, and the **generation prompt** itself answers only from the provided context — so even if one is bypassed, the model still won't invent an answer.
 
 ### Step 4: The AI Suggests What to Ask Next
 
 Once the answer is complete, a separate Gemini call analyzes the Q&A exchange and generates 3 follow-up questions that are directly answerable from the same document. These appear as clickable chips below the answer.
+
+---
+
+## Trust & Evaluation
+
+Answering is only half the job — knowing *when not to answer* is the other half, and the system is graded on it.
+
+### Measuring quality
+
+`ai-service/eval/` holds a golden set of answerable **and deliberately unanswerable** questions over a sample document. `run_eval.py` runs the real pipeline and reports three numbers:
+
+| Metric | What it measures |
+|--------|------------------|
+| **Retrieval hit-rate** | Did the right passage get retrieved? |
+| **Faithfulness** | Is every claim in the answer backed by the context? (LLM-as-judge) |
+| **Abstention accuracy** | Does it answer when it should and refuse when it should? |
+
+Run it with:
+
+```bash
+cd ai-service
+python eval/run_eval.py
+```
 
 ---
 
@@ -205,6 +232,8 @@ This separation means you can scale each part independently, swap out the LLM wi
 | **AI Service** | Python + FastAPI | Best AI/ML ecosystem, async by default |
 | **LLM** | Google Gemini 2.5 Flash | Fast, cheap, excellent instruction following |
 | **Embeddings** | gemini-embedding-001 (768-dim) | Semantic search quality |
+| **Retrieval** | Hybrid (vector + BM25) + reciprocal rank fusion | Catches exact terms vector search misses |
+| **Reranking & grading** | Gemini (LLM-as-reranker / grader) | Memory-light — no local models needed on a free-tier box |
 | **Text-to-Speech** | Gemini TTS (5 voices) | Native AI voices, PCM→WAV conversion |
 | **Vector Database** | Pinecone | Managed, scalable, millisecond vector search |
 | **Database** | MongoDB Atlas | Flexible schema for docs + messages |

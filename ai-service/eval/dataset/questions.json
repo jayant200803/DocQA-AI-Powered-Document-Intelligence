@@ -1,0 +1,16 @@
+[
+  { "question": "How long does the Orbit One battery last in typical use?", "answerable": true, "evidence": "7 days" },
+  { "question": "Is the Orbit One water resistant?", "answerable": true, "evidence": "5 ATM" },
+  { "question": "How much does the Orbit One cost?", "answerable": true, "evidence": "$199" },
+  { "question": "What size is the display?", "answerable": true, "evidence": "1.4-inch AMOLED" },
+  { "question": "How long does it take to fully charge?", "answerable": true, "evidence": "90 minutes" },
+  { "question": "Which operating systems does it support?", "answerable": true, "evidence": "Android 9" },
+  { "question": "What colours is the Orbit One available in?", "answerable": true, "evidence": "sage green" },
+  { "question": "What is the warranty period?", "answerable": true, "evidence": "2-year" },
+
+  { "question": "Does the Orbit One support contactless payments?", "answerable": false },
+  { "question": "Can the Orbit One make phone calls?", "answerable": false },
+  { "question": "Who is the CEO of Lumen?", "answerable": false },
+  { "question": "How much does the Orbit Two cost?", "answerable": false },
+  { "question": "Is there a student discount on the Orbit One?", "answerable": false }
+]

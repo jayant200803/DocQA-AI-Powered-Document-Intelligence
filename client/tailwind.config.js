@@ -1,3 +1,5 @@
+import tailwindcssAnimate from 'tailwindcss-animate';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
@@ -17,6 +19,15 @@ export default {
           900: '#312e81',
           950: '#1e1b4b',
         },
+        // Design tokens (defined in index.css :root) — use these in screens.
+        surface: 'rgb(var(--surface-1-rgb) / <alpha-value>)',
+        'surface-2': 'rgb(var(--surface-2-rgb) / <alpha-value>)',
+        ink: 'var(--text)',
+        muted: 'var(--text-muted)',
+        faint: 'var(--text-faint)',
+        line: 'var(--border)',
+        'line-strong': 'var(--border-strong)',
+        accent: { DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)', hover: 'var(--accent-hover)' },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -40,8 +51,8 @@ export default {
           to:   { opacity: '1', transform: 'translateX(0)' },
         },
         glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(99,102,241,0)' },
-          '50%':      { boxShadow: '0 0 20px 4px rgba(99,102,241,0.3)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(59,130,246,0)' },
+          '50%':      { boxShadow: '0 0 20px 4px rgba(59,130,246,0.3)' },
         },
         msgIn: {
           from: { opacity: '0', transform: 'translateY(8px) scale(0.98)' },
@@ -57,11 +68,18 @@ export default {
         msgIn:     'msgIn 0.26s cubic-bezier(0.16,1,0.3,1) forwards',
       },
       boxShadow: {
-        'glow-sm': '0 0 12px rgba(99,102,241,0.25)',
-        'glow':    '0 0 24px rgba(99,102,241,0.35)',
-        'glow-lg': '0 0 48px rgba(99,102,241,0.3)',
+        'glow-sm': '0 0 12px rgba(59,130,246,0.25)',
+        'glow':    '0 0 24px rgba(59,130,246,0.35)',
+        'glow-lg': '0 0 48px rgba(59,130,246,0.3)',
+        // Premium layered depth + accent glow for key surfaces/buttons.
+        'premium': '0 1px 0 0 rgba(255,255,255,0.06) inset, 0 8px 30px -8px rgba(0,0,0,0.6)',
+        'btn-glow': '0 1px 0 0 rgba(255,255,255,0.18) inset, 0 8px 24px -6px rgba(59,130,246,0.5)',
+      },
+      backgroundImage: {
+        'accent-gradient': 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%)',
+        'glass': 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 };
